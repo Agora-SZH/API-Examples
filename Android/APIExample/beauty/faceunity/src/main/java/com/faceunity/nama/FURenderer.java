@@ -171,6 +171,29 @@ public class FURenderer extends IFURenderer {
         return texId;
     }
 
+    @Override
+    public int onDrawFrameInput(byte[] img, int width, int height) {
+        prepareDrawFrame();
+        FURenderInputData inputData = new FURenderInputData(width, height);
+        /*注释掉Buffer配置，启用单纹理模式，防止Buffer跟纹理存在不对齐造成，美妆偏移*/
+        inputData.setImageBuffer(new FURenderInputData.FUImageBuffer(inputBufferType, img));//设置为单Buffer输入
+        FURenderInputData.FURenderConfig config = inputData.getRenderConfig();
+        config.setExternalInputType(externalInputType);
+        config.setInputOrientation(inputOrientation);
+        config.setDeviceOrientation(deviceOrientation);
+        config.setInputBufferMatrix(inputBufferMatrix);
+        config.setInputTextureMatrix(inputTextureMatrix);
+        config.setOutputMatrix(outputMatrix);
+        config.setCameraFacing(cameraFacing);
+        mCallStartTime = System.nanoTime();
+        FURenderOutputData outputData = mFURenderKit.renderWithInput(inputData);
+        mSumCallTime += System.nanoTime() - mCallStartTime;
+        if (outputData.getTexture() != null && outputData.getTexture().getTexId() > 0) {
+            return outputData.getTexture().getTexId();
+        }
+        return -1;
+    }
+
     /**
      * 释放资源
      */

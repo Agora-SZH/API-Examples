@@ -27,8 +27,8 @@ dependencies {
         resolutionStrategy.cacheDynamicVersionsFor 0,'seconds'
     }
     implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.faceunity:core:8.1.0'
-    implementation 'com.faceunity:model:8.1.0'
+    implementation 'com.faceunity:core:8.3.0'
+    implementation 'com.faceunity:model:8.3.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation project(":beauty:base")
 }

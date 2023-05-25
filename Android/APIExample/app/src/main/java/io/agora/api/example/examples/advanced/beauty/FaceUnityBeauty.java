@@ -1,5 +1,7 @@
 package io.agora.api.example.examples.advanced.beauty;
 
+import android.graphics.Matrix;
+import android.opengl.GLES20;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import androidx.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.Callable;
 
 import io.agora.api.example.R;
 import io.agora.api.example.common.BaseFragment;
@@ -21,14 +24,19 @@ import io.agora.api.example.databinding.FragmentBeautyFaceunityBinding;
 import io.agora.api.example.utils.TokenUtils;
 import io.agora.base.TextureBufferHelper;
 import io.agora.base.VideoFrame;
+import io.agora.base.internal.video.GlRectDrawer;
+import io.agora.base.internal.video.GlTextureFrameBuffer;
+import io.agora.base.internal.video.GlUtil;
 import io.agora.base.internal.video.YuvHelper;
 import io.agora.beauty.base.IBeautyFaceUnity;
 import io.agora.rtc2.ChannelMediaOptions;
 import io.agora.rtc2.Constants;
 import io.agora.rtc2.IRtcEngineEventHandler;
 import io.agora.rtc2.RtcEngine;
+import io.agora.rtc2.gl.EglBaseProvider;
 import io.agora.rtc2.video.IVideoFrameObserver;
 import io.agora.rtc2.video.VideoCanvas;
+import io.agora.rtc2.video.VideoEncoderConfiguration;
 
 public class FaceUnityBeauty extends BaseFragment {
     private static final String TAG = "SceneTimeBeauty";
@@ -38,11 +46,18 @@ public class FaceUnityBeauty extends BaseFragment {
     private RtcEngine rtcEngine;
     private String channelId;
     private ByteBuffer nv21ByteBuffer;
+
     private byte[] nv21ByteArray;
     private boolean isFrontCamera = true;
 
     private TextureBufferHelper mTextureBufferHelper;
-    private boolean isSingleInput = true;
+
+    // double cache input
+    private int mCurrIndex = -1;
+    private final int[] mOutTextureIds = new int[]{-1, -1};
+    private final GlTextureFrameBuffer[] mCacheFrameBuffers = new GlTextureFrameBuffer[2];
+    private final GlRectDrawer mDrawer = new GlRectDrawer();
+
 
     private VideoReportLayout mLocalVideoLayout;
     private VideoReportLayout mRemoteVideoLayout;
@@ -82,6 +97,13 @@ public class FaceUnityBeauty extends BaseFragment {
             mTextureBufferHelper.invoke(() -> {
                 iBeautyFaceUnity.release();
                 iBeautyFaceUnity = null;
+                for (int i = 0; i < mCacheFrameBuffers.length; i++) {
+                    GlTextureFrameBuffer buffer = mCacheFrameBuffers[i];
+                    if(buffer != null){
+                        buffer.release();
+                        mCacheFrameBuffers[i] = null;
+                    }
+                }
                 return null;
             });
             mTextureBufferHelper.dispose();
@@ -121,11 +143,6 @@ public class FaceUnityBeauty extends BaseFragment {
         mBinding.ivCamera.setOnClickListener(v -> {
             rtcEngine.switchCamera();
             isFrontCamera = !isFrontCamera;
-        });
-        mBinding.tvBeautyInput.setText(isSingleInput ? R.string.beauty_input_single : R.string.beauty_input_double);
-        mBinding.tvBeautyInput.setOnClickListener(v -> {
-            isSingleInput = !isSingleInput;
-            mBinding.tvBeautyInput.setText(isSingleInput ? R.string.beauty_input_single : R.string.beauty_input_double);
         });
         mBinding.smallVideoContainer.setOnClickListener(v -> updateVideoLayouts(!FaceUnityBeauty.this.isLocalFull));
     }
@@ -213,43 +230,28 @@ public class FaceUnityBeauty extends BaseFragment {
                     if (isDestroyed) {
                         return true;
                     }
-                    VideoFrame.Buffer buffer = videoFrame.getBuffer();
-                    if (!(buffer instanceof VideoFrame.TextureBuffer)) {
-                        return true;
-                    }
-
-                    VideoFrame.TextureBuffer texBuffer = (VideoFrame.TextureBuffer) buffer;
 
                     if (mTextureBufferHelper == null) {
                         doOnBeautyCreatingBegin();
-                        mTextureBufferHelper = TextureBufferHelper.create("STRender", texBuffer.getEglBaseContext());
-                        mTextureBufferHelper.invoke(() -> {
-                            iBeautyFaceUnity = IBeautyFaceUnity.create(getContext());
-                            return null;
-                        });
+                        mTextureBufferHelper = TextureBufferHelper.create("STRender", EglBaseProvider.getCurrentEglContext());
+                        iBeautyFaceUnity = IBeautyFaceUnity.create(getContext());
                         doOnBeautyCreatingEnd();
                     }
-
-                    VideoFrame.TextureBuffer processBuffer;
-                    if (isSingleInput) {
-                        processBuffer = processSingleInput(texBuffer);
-                    } else {
-                        processBuffer = processDoubleInput(texBuffer);
-                    }
-                    if(processBuffer == null){
-                        return true;
+                    boolean success = processBeauty(videoFrame, videoFrame.getSourceType() == VideoFrame.SourceType.kFrontCamera);
+                    if (!success) {
+                        return false;
                     }
                     // drag one frame to avoid reframe when switching camera.
-                    if(mFrameRotation != videoFrame.getRotation()){
+                    if (mFrameRotation != videoFrame.getRotation()) {
                         mFrameRotation = videoFrame.getRotation();
                         return false;
                     }
-                    videoFrame.replaceBuffer(processBuffer, mFrameRotation, videoFrame.getTimestampNs());
+
                     return true;
                 }
 
                 @Override
-                public boolean onPreEncodeVideoFrame(VideoFrame videoFrame) {
+                public boolean onPreEncodeVideoFrame( VideoFrame videoFrame) {
                     return false;
                 }
 
@@ -299,6 +301,12 @@ public class FaceUnityBeauty extends BaseFragment {
                 }
             };
             rtcEngine.registerVideoFrameObserver(mVideoFrameObserver);
+            rtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
+                    VideoEncoderConfiguration.VD_1280x720,
+                    VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
+                    1600,
+                    VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE
+            ));
             rtcEngine.enableVideo();
             rtcEngine.disableAudio();
 
@@ -307,26 +315,111 @@ public class FaceUnityBeauty extends BaseFragment {
         }
     }
 
-    private VideoFrame.TextureBuffer processSingleInput(VideoFrame.TextureBuffer texBuffer) {
+    private boolean processBeautyByTextureDouble(VideoFrame videoFrame, boolean isFrontCamera) {
+        VideoFrame.Buffer buffer = videoFrame.getBuffer();
+        if (!(buffer instanceof VideoFrame.TextureBuffer)) {
+            return false;
+        }
+        VideoFrame.TextureBuffer texBuffer = (VideoFrame.TextureBuffer) buffer;
 
         int width = texBuffer.getWidth();
         int height = texBuffer.getHeight();
 
-        Integer processTexId = mTextureBufferHelper.invoke(() -> iBeautyFaceUnity.process(
-                texBuffer.getTextureId(),
-                width, height
-        ));
+        long startTime = System.nanoTime();
 
-        return mTextureBufferHelper.wrapTextureBuffer(
+        int processTexId = -1;
+        if (mCurrIndex == -1) {
+            mCurrIndex = 0;
+            mTextureBufferHelper.invoke((Callable<Void>) () -> {
+                // copy texture to cache
+                if (mCacheFrameBuffers[0] == null) {
+                    // create texture
+                    mCacheFrameBuffers[0] = new GlTextureFrameBuffer(GLES20.GL_RGBA);
+                }
+                mCacheFrameBuffers[0].setSize(width, height);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mCacheFrameBuffers[0].getFrameBufferId());
+                mDrawer.drawOes(texBuffer.getTextureId(), GlUtil.IDENTITY_MATRIX, width, height, 0, 0, width, height);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+                return null;
+            });
+            mTextureBufferHelper.getHandler().post(() -> {
+                mOutTextureIds[0] = iBeautyFaceUnity.process(
+                        mCacheFrameBuffers[0].getTextureId(),
+                        GLES20.GL_TEXTURE_2D,
+                        width, height, isFrontCamera
+                );
+            });
+            return false;
+
+        } else if (mCurrIndex == 0) {
+            processTexId = mTextureBufferHelper.invoke(() -> {
+                return mOutTextureIds[0];
+            });
+            mCurrIndex = 1;
+            mTextureBufferHelper.invoke((Callable<Void>) () -> {
+                if (mCacheFrameBuffers[1] == null) {
+                    // create texture
+                    mCacheFrameBuffers[1] = new GlTextureFrameBuffer(GLES20.GL_RGBA);
+                }
+                mCacheFrameBuffers[1].setSize(width, height);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mCacheFrameBuffers[1].getFrameBufferId());
+                mDrawer.drawOes(texBuffer.getTextureId(), GlUtil.IDENTITY_MATRIX, width, height, 0, 0, width, height);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+                return null;
+            });
+            mTextureBufferHelper.getHandler().post(() -> {
+                mOutTextureIds[1] = iBeautyFaceUnity.process(
+                        mCacheFrameBuffers[1].getTextureId(),
+                        GLES20.GL_TEXTURE_2D,
+                        width, height, isFrontCamera
+                );
+            });
+
+        } else if (mCurrIndex == 1) {
+            processTexId = mTextureBufferHelper.invoke(() -> {
+                return mOutTextureIds[1];
+            });
+            mCurrIndex = 0;
+            mTextureBufferHelper.invoke((Callable<Void>) () -> {
+                if (mCacheFrameBuffers[0] == null) {
+                    // create texture
+                    mCacheFrameBuffers[0] = new GlTextureFrameBuffer(GLES20.GL_TEXTURE_2D);
+                }
+                mCacheFrameBuffers[0].setSize(width, height);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mCacheFrameBuffers[0].getFrameBufferId());
+                mDrawer.drawOes(texBuffer.getTextureId(), GlUtil.IDENTITY_MATRIX, width, height, 0, 0, width, height);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+                return null;
+            });
+            mTextureBufferHelper.getHandler().post(() -> {
+                mOutTextureIds[0] = iBeautyFaceUnity.process(
+                        mCacheFrameBuffers[0].getTextureId(),
+                        GLES20.GL_TEXTURE_2D,
+                        width, height, isFrontCamera
+                );
+            });
+        }
+        if (mFrameRotation != videoFrame.getRotation()) {
+            mFrameRotation = videoFrame.getRotation();
+            mCurrIndex = -1;
+            return false;
+        }
+        long processDuration = (System.nanoTime() - startTime) / 1000000;
+        Log.d(TAG, "processBeautyByTextureDouble consume time: " + processDuration);
+
+        VideoFrame.TextureBuffer textureBuffer = mTextureBufferHelper.wrapTextureBuffer(
                 width, height, VideoFrame.TextureBuffer.Type.RGB, processTexId,
                 texBuffer.getTransformMatrix());
+        videoFrame.replaceBuffer(textureBuffer, videoFrame.getRotation(), videoFrame.getTimestampNs());
+        return true;
     }
 
-    private VideoFrame.TextureBuffer processDoubleInput(VideoFrame.TextureBuffer texBuffer) {
+    private boolean processBeautyByNV21(VideoFrame videoFrame, boolean isFrontCamera) {
+        VideoFrame.Buffer buffer = videoFrame.getBuffer();
+        int width = buffer.getWidth();
+        int height = buffer.getHeight();
 
-        int textureId = texBuffer.getTextureId();
-        int width = texBuffer.getWidth();
-        int height = texBuffer.getHeight();
+        long startTime = System.nanoTime();
 
         int nv21Size = (int) (width * height * 3.0f / 2.0f + 0.5f);
         if (nv21ByteBuffer == null || nv21ByteBuffer.capacity() != nv21Size) {
@@ -338,7 +431,7 @@ public class FaceUnityBeauty extends BaseFragment {
         }
 
 
-        VideoFrame.I420Buffer i420Buffer = texBuffer.toI420();
+        VideoFrame.I420Buffer i420Buffer = buffer.toI420();
         YuvHelper.I420ToNV12(i420Buffer.getDataY(), i420Buffer.getStrideY(),
                 i420Buffer.getDataV(), i420Buffer.getStrideV(),
                 i420Buffer.getDataU(), i420Buffer.getStrideU(),
@@ -347,14 +440,30 @@ public class FaceUnityBeauty extends BaseFragment {
         nv21ByteBuffer.get(nv21ByteArray);
         i420Buffer.release();
 
+        long nv21TranDuration = (System.nanoTime() - startTime) / 1000000;
+
         Integer processTexId = mTextureBufferHelper.invoke(() -> iBeautyFaceUnity.process(
                 nv21ByteArray,
-                textureId,
-                width, height
+                width, height, isFrontCamera
         ));
 
-        return mTextureBufferHelper.wrapTextureBuffer(
-                width, height, VideoFrame.TextureBuffer.Type.RGB, processTexId, texBuffer.getTransformMatrix());
+        long processDuration = (System.nanoTime() - startTime) / 1000000;
+        Log.d(TAG, "processBeautyByNV21 consume time: " + processDuration + "(" + nv21TranDuration + ")");
+
+        VideoFrame.TextureBuffer textureBuffer = mTextureBufferHelper.wrapTextureBuffer(
+                width, height, VideoFrame.TextureBuffer.Type.RGB, processTexId,
+                new Matrix());
+        videoFrame.replaceBuffer(textureBuffer, videoFrame.getRotation(), videoFrame.getTimestampNs());
+        return true;
+    }
+
+
+    private boolean processBeauty(VideoFrame videoFrame, boolean isFrontCamera) {
+        if (videoFrame.getBuffer() instanceof VideoFrame.TextureBuffer) {
+            return processBeautyByTextureDouble(videoFrame, isFrontCamera);
+        } else {
+            return processBeautyByNV21(videoFrame, isFrontCamera);
+        }
     }
 
     private void joinChannel() {
@@ -371,7 +480,9 @@ public class FaceUnityBeauty extends BaseFragment {
 
         mLocalVideoLayout = new VideoReportLayout(requireContext());
         TextureView videoView = new TextureView(requireContext());
-        rtcEngine.setupLocalVideo(new VideoCanvas(videoView, Constants.RENDER_MODE_HIDDEN));
+        VideoCanvas local = new VideoCanvas(videoView, Constants.RENDER_MODE_HIDDEN);
+        local.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED;
+        rtcEngine.setupLocalVideo(local);
         mLocalVideoLayout.addView(videoView);
         rtcEngine.startPreview();
 

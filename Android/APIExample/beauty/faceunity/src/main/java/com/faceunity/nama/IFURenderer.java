@@ -50,6 +50,7 @@ abstract class IFURenderer {
     public abstract int onDrawFrameDualInput(byte[] img, int texId, int width, int height);
 
     public abstract int onDrawFrameInput(int texId, int width, int height);
+    public abstract int onDrawFrameInput(byte[] img, int width, int height);
 
     /**
      * 设置检测类型

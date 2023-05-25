@@ -1,14 +1,15 @@
 package io.agora.beauty.faceunity;
 
 import android.content.Context;
+import android.opengl.GLES20;
 
 import com.faceunity.FUConfig;
 import com.faceunity.core.entity.FUBundleData;
+import com.faceunity.core.enumeration.FUInputTextureEnum;
+import com.faceunity.core.enumeration.FUTransformMatrixEnum;
 import com.faceunity.core.faceunity.FUAIKit;
 import com.faceunity.core.faceunity.FURenderKit;
-import com.faceunity.core.model.bodyBeauty.BodyBeauty;
 import com.faceunity.core.model.facebeauty.FaceBeauty;
-import com.faceunity.core.model.facebeauty.FaceBeautyBlurTypeEnum;
 import com.faceunity.core.model.facebeauty.FaceBeautyFilterEnum;
 import com.faceunity.core.model.makeup.SimpleMakeup;
 import com.faceunity.core.model.prop.Prop;
@@ -36,58 +37,79 @@ public class BeautyFaceUnityImpl implements IBeautyFaceUnity {
         fuRenderer.setup(context);
 
         initFaceBeauty();
-        initBodyBeauty();
     }
 
     private void initFaceBeauty() {
         // config face beauty
         FUAIKit.getInstance().faceProcessorSetFaceLandmarkQuality(FUConfig.DEVICE_LEVEL);
         FaceBeauty recommendFaceBeauty = new FaceBeauty(new FUBundleData(BUNDLE_FACE_BEAUTIFICATION));
-        recommendFaceBeauty.setFilterName(FaceBeautyFilterEnum.ZIRAN_1);
-        recommendFaceBeauty.setFilterIntensity(0.4);
-        /*美肤*/
-        recommendFaceBeauty.setBlurType(FaceBeautyBlurTypeEnum.FineSkin);
-        recommendFaceBeauty.setSharpenIntensity(0.2);
-        recommendFaceBeauty.setColorIntensity(0.3);
-        recommendFaceBeauty.setRedIntensity(0.3);
-        recommendFaceBeauty.setBlurIntensity(4.2);
-        /*美型*/
-        recommendFaceBeauty.setFaceShapeIntensity(1.0);
-        recommendFaceBeauty.setEyeEnlargingIntensityV2(0.4);
-        recommendFaceBeauty.setCheekVIntensity(0.5);
-        recommendFaceBeauty.setNoseIntensityV2(0.5);
-        recommendFaceBeauty.setForHeadIntensityV2(0.3);
-        recommendFaceBeauty.setMouthIntensityV2(0.4);
-        recommendFaceBeauty.setChinIntensity(0.3);
+        recommendFaceBeauty.setFilterName(FaceBeautyFilterEnum.FENNEN_1);
+        recommendFaceBeauty.setFilterIntensity(0.7);
+        // 美牙
+        recommendFaceBeauty.setToothIntensity(0.3f);
+        // 亮眼
+        recommendFaceBeauty.setEyeBrightIntensity(0.3f);
+        // 大眼
+        recommendFaceBeauty.setEyeEnlargingIntensity(0.5f);
+        // 红润
+        recommendFaceBeauty.setRedIntensity(0.5f * 2);
+        // 美白
+        recommendFaceBeauty.setColorIntensity(0.75f * 2);
+        // 磨皮
+        recommendFaceBeauty.setBlurIntensity(0.75f * 6);
+        // 嘴型
+        recommendFaceBeauty.setMouthIntensity(0.3f);
+        // 瘦鼻
+        recommendFaceBeauty.setNoseIntensity(0.1f);
+        // 额头
+        recommendFaceBeauty.setForHeadIntensity(0.3f);
+        // 下巴
+        recommendFaceBeauty.setChinIntensity(0.f);
+        // 瘦脸
+        recommendFaceBeauty.setCheekThinningIntensity(0.3f);
+        // 窄脸
+        recommendFaceBeauty.setCheekNarrowIntensity(0.f);
+        // 小脸
+        recommendFaceBeauty.setCheekSmallIntensity(0.f);
+        // v脸
+        recommendFaceBeauty.setCheekVIntensity(0.0f);
         mFURenderKit.setFaceBeauty(recommendFaceBeauty);
     }
 
-    private void initBodyBeauty() {
-        BodyBeauty bodyBeauty = new BodyBeauty(new FUBundleData(BUNDLE_BODY_BEAUTY));
-        bodyBeauty.setBodySlimIntensity(1);
-        bodyBeauty.setLegStretchIntensity(1);
-        bodyBeauty.setWaistSlimIntensity(1);
-        bodyBeauty.setShoulderSlimIntensity(1);
-        bodyBeauty.setHipSlimIntensity(1);
-        bodyBeauty.setHeadSlimIntensity(1);
-        bodyBeauty.setLegSlimIntensity(1);
-        mFURenderKit.setBodyBeauty(bodyBeauty);
-    }
-
     @Override
-    public int process(int oesTexId, int width, int height) {
+    public int process(int texId, int texType, int width, int height, boolean isFront) {
         if (isReleased) {
             return -1;
         }
-        return fuRenderer.onDrawFrameInput(oesTexId, width, height);
+        if (isFront) {
+            fuRenderer.setInputBufferMatrix(FUTransformMatrixEnum.CCROT0);
+            fuRenderer.setInputTextureMatrix(FUTransformMatrixEnum.CCROT0);
+            fuRenderer.setOutputMatrix(FUTransformMatrixEnum.CCROT0);
+        } else {
+            fuRenderer.setInputBufferMatrix(FUTransformMatrixEnum.CCROT0_FLIPVERTICAL);
+            fuRenderer.setInputTextureMatrix(FUTransformMatrixEnum.CCROT0_FLIPVERTICAL);
+            fuRenderer.setOutputMatrix(FUTransformMatrixEnum.CCROT0);
+        }
+        fuRenderer.setInputTextureType(texType == GLES20.GL_TEXTURE_2D ? FUInputTextureEnum.FU_ADM_FLAG_COMMON_TEXTURE : FUInputTextureEnum.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE);
+        return fuRenderer.onDrawFrameInput(texId, width, height);
     }
 
+
     @Override
-    public int process(byte[] nv21, int oesTexId, int width, int height) {
+    public int process(byte[] nv21, int width, int height, boolean isFront) {
         if (isReleased) {
             return -1;
         }
-        return fuRenderer.onDrawFrameDualInput(nv21, oesTexId, width, height);
+        if(isFront){
+            fuRenderer.setInputBufferMatrix(FUTransformMatrixEnum.CCROT0);
+            fuRenderer.setInputTextureMatrix(FUTransformMatrixEnum.CCROT0);
+            fuRenderer.setOutputMatrix(FUTransformMatrixEnum.CCROT0_FLIPVERTICAL);
+        }else{
+            fuRenderer.setInputBufferMatrix(FUTransformMatrixEnum.CCROT0_FLIPVERTICAL);
+            fuRenderer.setInputTextureMatrix(FUTransformMatrixEnum.CCROT0_FLIPVERTICAL);
+            fuRenderer.setOutputMatrix(FUTransformMatrixEnum.CCROT0_FLIPVERTICAL);
+        }
+        return fuRenderer.onDrawFrameInput(nv21, width, height);
     }
 
     @Override
