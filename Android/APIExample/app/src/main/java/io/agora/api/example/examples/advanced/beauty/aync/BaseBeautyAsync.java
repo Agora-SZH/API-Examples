@@ -25,6 +25,8 @@ public abstract class BaseBeautyAsync {
 
     private volatile boolean isFront = false;
 
+    private volatile int skipFrame = 0;
+
     public BaseBeautyAsync(TextureBufferHelper textureBufferHelper) {
         this.textureBufferHelper = textureBufferHelper;
         consumer = new BeautyFrameConsumer(textureBufferHelper, this::onFrameConsumed);
@@ -55,6 +57,11 @@ public abstract class BaseBeautyAsync {
 
             if(isFront != this.isFront){
                 this.isFront = isFront;
+                skipFrame = 2;
+                return false;
+            }
+            if(skipFrame > 0){
+                skipFrame --;
                 return false;
             }
             if (outFrameBuffer != null) {
@@ -87,10 +94,15 @@ public abstract class BaseBeautyAsync {
         if (isRelease) {
             return;
         }
+        if(videoFrame.isFront != this.isFront){
+            return;
+        }
         int width = videoFrame.width;
         int height = videoFrame.height;
         int originTexId = videoFrame.textureId;
+        long startTime = System.currentTimeMillis();
         int retTextId = process(videoFrame, width, height, originTexId);
+        Log.d(TAG, "onFrameConsumed beauty process cost " + (System.currentTimeMillis() - startTime));
         // copy to fbo textureId
         if (outFrameBuffer == null) {
             outFrameBuffer = new GlTextureFrameBuffer(GLES20.GL_RGBA);
@@ -99,6 +111,7 @@ public abstract class BaseBeautyAsync {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, outFrameBuffer.getFrameBufferId());
         mDrawer.drawRgb(retTextId, GlUtil.IDENTITY_MATRIX, width, height, 0, 0, width, height);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLES20.glFinish();
     }
 
     protected abstract int process(AsyncVideoFrame videoFrame, int width, int height, int originTexId);

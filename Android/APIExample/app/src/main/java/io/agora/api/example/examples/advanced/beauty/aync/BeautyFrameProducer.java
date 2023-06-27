@@ -71,6 +71,7 @@ public class BeautyFrameProducer {
                 mDrawer.drawOes(textureId, GlUtil.IDENTITY_MATRIX, width, height, 0, 0, width, height);
             }
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+            GLES20.glFinish();
 
             AsyncVideoFrame _frame = mFrameQueue[_index];
             if (_frame == null) {

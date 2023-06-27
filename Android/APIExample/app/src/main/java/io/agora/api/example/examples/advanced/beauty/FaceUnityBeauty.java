@@ -83,6 +83,9 @@ public class FaceUnityBeauty extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         isDestroyed = true;
+        if (rtcEngine != null) {
+            rtcEngine.leaveChannel();
+        }
         if(faceUnityAsync != null){
             faceUnityAsync.release();
             faceUnityAsync = null;
@@ -96,10 +99,14 @@ public class FaceUnityBeauty extends BaseFragment {
             mTextureBufferHelper.dispose();
             mTextureBufferHelper = null;
         }
-        if (rtcEngine != null) {
-            rtcEngine.leaveChannel();
-        }
         RtcEngine.destroy();
+    }
+
+    @Override
+    protected void onBackPressed() {
+        mBinding.fullVideoContainer.removeAllViews();
+        mBinding.smallVideoContainer.removeAllViews();
+        super.onBackPressed();
     }
 
     private void initVideoView() {
@@ -221,6 +228,7 @@ public class FaceUnityBeauty extends BaseFragment {
                     if (mTextureBufferHelper == null) {
                         mTextureBufferHelper = TextureBufferHelper.create("FURender", EglBaseProvider.instance().getRootEglBase().getEglBaseContext());
                     }
+
                     boolean success = processBeauty(videoFrame);
                     if (!success) {
                         return false;
@@ -277,7 +285,7 @@ public class FaceUnityBeauty extends BaseFragment {
             };
             rtcEngine.registerVideoFrameObserver(mVideoFrameObserver);
             rtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
-                    VideoEncoderConfiguration.VD_1280x720,
+                    VideoEncoderConfiguration.VD_1920x1080,
                     VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
                     1600,
                     VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE
@@ -302,6 +310,7 @@ public class FaceUnityBeauty extends BaseFragment {
         long startTime = System.nanoTime();
         boolean process = faceUnityAsync.process(videoFrame);
         long processDuration = (System.nanoTime() - startTime) / 1000000;
+        runOnUIThread(() -> mBinding.tvBeautyCost.setText("BeautyCost(TextureAsync): " + processDuration + " ms"));
         Log.d(TAG, "processBeautyByTextureDouble consume time: " + processDuration);
         return process;
     }
@@ -340,6 +349,7 @@ public class FaceUnityBeauty extends BaseFragment {
         ));
 
         long processDuration = (System.nanoTime() - startTime) / 1000000;
+        runOnUIThread(() -> mBinding.tvBeautyCost.setText("BeautyCost(NV21): " + processDuration + " ms"));
         Log.d(TAG, "processBeautyByNV21 consume time: " + processDuration + "(" + nv21TranDuration + ")");
 
         VideoFrame.TextureBuffer textureBuffer = mTextureBufferHelper.wrapTextureBuffer(
