@@ -20,7 +20,7 @@ public class BeautyFrameProducer {
     private final AsyncVideoFrame[] mFrameQueue = new AsyncVideoFrame[cacheCount];
     private final boolean[] mFrameProcessing = new boolean[cacheCount];
     private final Runnable[] mPushRuns = new Runnable[cacheCount];
-    private final GlRectDrawer mDrawer = new GlRectDrawer();
+    private GlRectDrawer mDrawer = null;
     private volatile boolean isReleased = false;
 
 
@@ -65,6 +65,9 @@ public class BeautyFrameProducer {
             }
             frameBuffer.setSize(width, height);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBuffer.getFrameBufferId());
+            if(mDrawer == null){
+                mDrawer = new GlRectDrawer();
+            }
             if (texType == GLES20.GL_TEXTURE_2D) {
                 mDrawer.drawRgb(textureId, GlUtil.IDENTITY_MATRIX, width, height, 0, 0, width, height);
             } else {
@@ -134,6 +137,10 @@ public class BeautyFrameProducer {
                     frameBuffer.release();
                     mCacheFrameBuffers[i] = null;
                 }
+            }
+            if(mDrawer != null){
+                mDrawer.release();
+                mDrawer = null;
             }
             return null;
         });
