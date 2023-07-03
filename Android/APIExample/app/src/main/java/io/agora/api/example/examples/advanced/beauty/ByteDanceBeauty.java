@@ -306,7 +306,7 @@ public class ByteDanceBeauty extends BaseFragment {
 
         mLocalVideoLayout = new VideoReportLayout(requireContext());
         TextureView videoView = new TextureView(requireContext());
-        rtcEngine.setupLocalVideo(new VideoCanvas(videoView, Constants.RENDER_MODE_HIDDEN));
+        rtcEngine.setupLocalVideo(new VideoCanvas(videoView, Constants.RENDER_MODE_HIDDEN, 0));
         mLocalVideoLayout.addView(videoView);
         rtcEngine.startPreview();
 

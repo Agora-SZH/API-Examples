@@ -157,8 +157,7 @@ public class AudienceFragment extends BaseFragment implements IMediaPlayerObserv
             }
             fl_local.addView(surfaceView);
             // Setup local video to render your local media player view
-            VideoCanvas videoCanvas = new VideoCanvas(surfaceView, Constants.RENDER_MODE_HIDDEN, Constants.VIDEO_MIRROR_MODE_AUTO,
-                    Constants.VIDEO_SOURCE_MEDIA_PLAYER, mediaPlayer.getMediaPlayerId(), 0);
+            VideoCanvas videoCanvas = new VideoCanvas(surfaceView, Constants.RENDER_MODE_HIDDEN, 0);
             engine.setupLocalVideo(videoCanvas);
             // Your have to call startPreview to see player video
             engine.startPreview();
@@ -384,8 +383,7 @@ public class AudienceFragment extends BaseFragment implements IMediaPlayerObserv
             }
             fl_local.addView(surfaceView);
             // Setup local video to render your local media player view
-            VideoCanvas videoCanvas = new VideoCanvas(surfaceView, Constants.RENDER_MODE_HIDDEN, Constants.VIDEO_MIRROR_MODE_AUTO,
-                    Constants.VIDEO_SOURCE_MEDIA_PLAYER, mediaPlayer.getMediaPlayerId(), 0);
+            VideoCanvas videoCanvas = new VideoCanvas(surfaceView, Constants.RENDER_MODE_HIDDEN, 0);
             engine.setupLocalVideo(videoCanvas);
         }
         engine.startPreview();

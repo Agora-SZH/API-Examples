@@ -382,7 +382,7 @@ public class FaceUnityBeauty extends BaseFragment {
 
         mLocalVideoLayout = new VideoReportLayout(requireContext());
         TextureView videoView = new TextureView(requireContext());
-        VideoCanvas local = new VideoCanvas(videoView, Constants.RENDER_MODE_HIDDEN);
+        VideoCanvas local = new VideoCanvas(videoView, Constants.RENDER_MODE_HIDDEN, 0);
         local.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED;
         rtcEngine.setupLocalVideo(local);
         mLocalVideoLayout.addView(videoView);

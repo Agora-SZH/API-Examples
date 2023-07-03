@@ -327,10 +327,7 @@ public class SwitchCameraScreenShare extends BaseFragment implements View.OnClic
         // Add to the local container
         fl_screen.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         // Setup local video to render your local camera preview
-        engine.setupLocalVideo(new VideoCanvas(surfaceView, Constants.RENDER_MODE_FIT,
-                Constants.VIDEO_MIRROR_MODE_DISABLED,
-                Constants.VIDEO_SOURCE_SCREEN_PRIMARY,
-                  0));
+        engine.setupLocalVideo(new VideoCanvas(surfaceView, Constants.RENDER_MODE_FIT,0));
         engine.startPreview(Constants.VideoSourceType.VIDEO_SOURCE_SCREEN_PRIMARY);
     }
 
@@ -351,10 +348,7 @@ public class SwitchCameraScreenShare extends BaseFragment implements View.OnClic
         // Setup local video to render your local camera preview
         engine.setupLocalVideo(new VideoCanvas(
                 surfaceView,
-                RENDER_MODE_HIDDEN,
-                Constants.VIDEO_MIRROR_MODE_AUTO,
-                Constants.VIDEO_SOURCE_CAMERA_PRIMARY,
-                0));
+                RENDER_MODE_HIDDEN,0));
         engine.startPreview(Constants.VideoSourceType.VIDEO_SOURCE_CAMERA_PRIMARY);
     }
 
