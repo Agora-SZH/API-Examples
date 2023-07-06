@@ -17,6 +17,7 @@ public abstract class BaseBeautyAsync {
     private final BeautyFrameConsumer consumer;
 
     private GlTextureFrameBuffer outFrameBuffer;
+    private volatile boolean outFrameUpdate = false;
     private final GlRectDrawer mDrawer = new GlRectDrawer();
 
     private final TextureBufferHelper textureBufferHelper;
@@ -64,9 +65,10 @@ public abstract class BaseBeautyAsync {
                 skipFrame --;
                 return false;
             }
-            if (outFrameBuffer != null) {
+            if (outFrameBuffer != null && outFrameUpdate) {
                 VideoFrame.TextureBuffer newBuffer = textureBufferHelper.wrapTextureBuffer(width, height, VideoFrame.TextureBuffer.Type.RGB, outFrameBuffer.getTextureId(), textureBuffer.getTransformMatrix());
                 videoFrame.replaceBuffer(newBuffer, videoFrame.getRotation(), videoFrame.getTimestampNs());
+                outFrameUpdate = false;
                 return true;
             }
         } else {
@@ -103,6 +105,8 @@ public abstract class BaseBeautyAsync {
         long startTime = System.currentTimeMillis();
         int retTextId = process(videoFrame, width, height, originTexId);
         Log.d(TAG, "onFrameConsumed beauty process cost " + (System.currentTimeMillis() - startTime));
+
+
         // copy to fbo textureId
         if (outFrameBuffer == null) {
             outFrameBuffer = new GlTextureFrameBuffer(GLES20.GL_RGBA);
@@ -112,6 +116,7 @@ public abstract class BaseBeautyAsync {
         mDrawer.drawRgb(retTextId, GlUtil.IDENTITY_MATRIX, width, height, 0, 0, width, height);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glFinish();
+        outFrameUpdate = true;
     }
 
     protected abstract int process(AsyncVideoFrame videoFrame, int width, int height, int originTexId);
