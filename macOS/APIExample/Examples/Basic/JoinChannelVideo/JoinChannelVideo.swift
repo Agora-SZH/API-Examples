@@ -9,6 +9,11 @@ import Cocoa
 import AgoraRtcKit
 import AGEVideoLayout
 
+struct SuperResolution: Codable {
+    let uid: Int
+    let type: Int
+}
+
 class JoinChannelVideoMain: BaseViewController {
     
     var agoraKit: AgoraRtcEngineKit!
@@ -260,6 +265,7 @@ class JoinChannelVideoMain: BaseViewController {
         let config = AgoraRtcEngineConfig()
         config.appId = KeyCenter.AppId
         config.areaCode = GlobalSettings.shared.area
+        config.eventDelegate = self
         
         agoraKit = AgoraRtcEngineKit.sharedEngine(with: config, delegate: self)
         // Configuring Privatization Parameters
@@ -382,6 +388,24 @@ class JoinChannelVideoMain: BaseViewController {
         }
     }
     
+    @IBAction func superResolution(_ sender: NSSwitch) {
+        let isEnable = sender.state == .on
+        let pameters = """
+         {
+           "rtc.video.enable_sr": {
+             "enabled": \(isEnable),
+             "mode": 2
+           }
+         }
+       """
+        agoraKit.setParameters(pameters)
+        
+        if sender.state == .off {
+            videos.forEach { v in
+                v.statsInfo?.updateSuperResolution("")
+            }
+        }
+    }
     override func viewWillBeRemovedFromSplitView() {
         if isJoined {
             agoraKit.disableVideo()
@@ -509,5 +533,42 @@ extension JoinChannelVideoMain: AgoraRtcEngineDelegate {
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, localVideoStateChangedOf state: AgoraVideoLocalState, error: AgoraLocalVideoStreamError, sourceType:AgoraVideoSourceType) {
         LogUtils.log(message: "AgoraRtcEngineKit state: \(state), error \(error)", level: .info)
+    }
+}
+
+
+extension JoinChannelVideoMain: AgoraMediaFilterEventDelegate{
+    func onEvent(_ provider: String?, extension: String?, key: String?, value: String?) {
+        if let srKey = key, srKey == "sr_type" {
+            if let jsonData = value?.data(using: .utf8) {
+                do {
+                    let decoder = JSONDecoder()
+                    let superResolution = try decoder.decode(SuperResolution.self, from: jsonData)
+                    let videoView = videos.filter { $0.uid ?? 0 == superResolution.uid }
+                    var stat = ""
+                    switch superResolution.type {
+                    case 3:
+                        stat = "2倍超分"
+                    case 6:
+                        stat = "1倍超分（自研锐化）"
+                    case 7:
+                        stat = "1.33倍超分"
+                    case 8:
+                        stat = "1.5倍超分"
+                    case 10:
+                        stat = "CPU锐化"
+                    case 11:
+                        stat = "GPU锐化"
+                    case 20:
+                        stat = "超级画质"
+                    default:
+                        break
+                    }
+                    videoView[0].statsInfo?.updateSuperResolution(stat)
+                } catch {
+                    print("Error decoding JSON: \(error)")
+                }
+            }
+        }
     }
 }

@@ -21,6 +21,7 @@ struct StatisticsInfo {
         var videoStats : AgoraRtcRemoteVideoStats?
         var audioStats : AgoraRtcRemoteAudioStats?
         var audioVolume : UInt?
+        var superResolution : String?
     }
     
     enum StatisticsType {
@@ -120,6 +121,17 @@ struct StatisticsInfo {
         }
     }
     
+    mutating func updateSuperResolution(_ superResolution: String) {
+        switch type {
+        case .remote(let info):
+            var new = info
+            new.superResolution = superResolution
+            self.type = .remote(new)
+        case .local(_):
+            break
+        }
+    }
+    
     mutating func updateFirstFrameInfo(_ info: AgoraVideoRenderingTracingInfo) {
         firstFrameElapsedTime = Double(info.elapsedTime)
     }
@@ -137,11 +149,12 @@ struct StatisticsInfo {
         var results:[String] = []
         
         let firstFrame = "firstFrameTime: \(firstFrameElapsedTime)"
+        
+        if let volume = info.audioVolume {
+            results.append("Volume: \(volume)")
+        }
+        
         if(!audioOnly) {
-            if let volume = info.audioVolume {
-                results.append("Volume: \(volume)")
-            }
-            
             if let videoStats = info.videoStats, let channelStats = info.channelStats, let audioStats = info.audioStats {
                 results.append("\(Int(videoStats.encodedFrameWidth))×\(Int(videoStats.encodedFrameHeight)),\(videoStats.sentFrameRate)fps")
                 results.append("LM Delay: \(channelStats.lastmileDelay)ms")
@@ -151,10 +164,6 @@ struct StatisticsInfo {
                 results.append("Send Loss: \(channelStats.txPacketLossRate)%")
             }
         } else {
-            if let volume = info.audioVolume {
-                results.append("Volume: \(volume)")
-            }
-            
             if let channelStats = info.channelStats, let audioStats = info.audioStats {
                 results.append("LM Delay: \(channelStats.lastmileDelay)ms")
                 results.append("ASend: \(audioStats.sentBitrate)kbps")
@@ -162,9 +171,11 @@ struct StatisticsInfo {
                 results.append("Send Loss: \(channelStats.txPacketLossRate)%")
             }
         }
+        
         if firstFrameElapsedTime > 0 {
             results.append(firstFrame)
         }
+        
         return results.joined(separator: "\n")
     }
     
@@ -172,11 +183,12 @@ struct StatisticsInfo {
         var results:[String] = []
         
         let firstFrame = "firstFrameTime: \(firstFrameElapsedTime)"
+        
+        if let volume = info.audioVolume {
+            results.append("Volume: \(volume)")
+        }
+        
         if(!audioOnly) {
-            if let volume = info.audioVolume {
-                results.append("Volume: \(volume)")
-            }
-            
             if let videoStats = info.videoStats, let audioStats = info.audioStats {
                 let audioQuality:AgoraNetworkQuality = AgoraNetworkQuality(rawValue: audioStats.quality) ?? .unknown
                 results.append("\(Int(videoStats.width))×\(Int(videoStats.height)),\(videoStats.decoderOutputFrameRate)fps")
@@ -187,10 +199,6 @@ struct StatisticsInfo {
                 results.append("AQuality: \(audioQuality.description())")
             }
         } else {
-            if let volume = info.audioVolume {
-                results.append("Volume: \(volume)")
-            }
-            
             if let audioStats = info.audioStats {
                 let audioQuality:AgoraNetworkQuality = AgoraNetworkQuality(rawValue: audioStats.quality) ?? .unknown
                 results.append("ARecv: \(audioStats.receivedBitrate)kbps")
@@ -198,8 +206,13 @@ struct StatisticsInfo {
                 results.append("AQuality: \(audioQuality.description())")
             }
         }
+        
         if firstFrameElapsedTime > 0 {
             results.append(firstFrame)
+        }
+        
+        if let superResolution = info.superResolution {
+            results.append("superResolution: \(superResolution)")
         }
         return results.joined(separator: "\n")
     }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -81,7 +81,10 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         </view>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wck-kx-dah">
-                                            <rect key="frame" x="26" y="7" width="268" height="32"/>
+                                            <rect key="frame" x="26" y="7" width="178" height="32"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="164" id="tgB-CF-F29"/>
+                                            </constraints>
                                             <buttonCell key="cell" type="push" title="Join" bezelStyle="rounded" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Lhu-U1-6qh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -90,11 +93,44 @@
                                                 <action selector="onVideoCallButtonPressed:" target="YjT-yy-DnJ" id="0oH-L6-nRD"/>
                                             </connections>
                                         </button>
+                                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="ago-I1-1UT">
+                                            <rect key="frame" x="205" y="12" width="73" height="25"/>
+                                            <subviews>
+                                                <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="4XU-JQ-maF">
+                                                    <rect key="frame" x="33" y="-2" width="42" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="38" id="gQo-ve-TCU"/>
+                                                    </constraints>
+                                                    <connections>
+                                                        <action selector="superResolution:" target="YjT-yy-DnJ" id="vRA-ls-ZCy"/>
+                                                    </connections>
+                                                </switch>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5MI-Ig-1wf">
+                                                    <rect key="frame" x="2" y="4" width="31" height="16"/>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="超分" id="Rp1-Cs-BOE">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="73" id="2jh-dQ-uOr"/>
+                                                <constraint firstItem="4XU-JQ-maF" firstAttribute="top" secondItem="ago-I1-1UT" secondAttribute="top" id="9LZ-KT-7Od"/>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="25" id="ULj-rw-nL1"/>
+                                                <constraint firstItem="5MI-Ig-1wf" firstAttribute="leading" secondItem="ago-I1-1UT" secondAttribute="leading" constant="4" id="We4-Dc-niH"/>
+                                                <constraint firstAttribute="trailing" secondItem="4XU-JQ-maF" secondAttribute="trailing" id="WlC-uJ-99a"/>
+                                                <constraint firstAttribute="bottom" secondItem="4XU-JQ-maF" secondAttribute="bottom" id="X0x-gR-4fw"/>
+                                                <constraint firstItem="5MI-Ig-1wf" firstAttribute="centerY" secondItem="ago-I1-1UT" secondAttribute="centerY" id="qPk-QZ-cuE"/>
+                                                <constraint firstAttribute="height" constant="25" id="rBI-Zj-NdF"/>
+                                            </constraints>
+                                        </customView>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="Wck-kx-dah" firstAttribute="leading" secondItem="wnS-VB-gLe" secondAttribute="leading" constant="33" id="4qV-4m-nOw"/>
                                         <constraint firstItem="Wck-kx-dah" firstAttribute="top" secondItem="cOW-S1-5WE" secondAttribute="bottom" constant="9" id="AJy-TB-6tE"/>
-                                        <constraint firstItem="Wck-kx-dah" firstAttribute="centerX" secondItem="cOW-S1-5WE" secondAttribute="centerX" id="gcU-V4-YoN"/>
+                                        <constraint firstItem="ago-I1-1UT" firstAttribute="leading" secondItem="Wck-kx-dah" secondAttribute="trailing" constant="8" id="OEu-j6-D5B"/>
+                                        <constraint firstItem="ago-I1-1UT" firstAttribute="centerY" secondItem="Wck-kx-dah" secondAttribute="centerY" id="qH1-EO-eps"/>
                                         <constraint firstAttribute="bottom" secondItem="Wck-kx-dah" secondAttribute="bottom" constant="14" id="yye-wq-Geh"/>
                                     </constraints>
                                 </view>
