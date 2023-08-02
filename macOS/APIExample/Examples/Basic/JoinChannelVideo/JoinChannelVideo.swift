@@ -190,7 +190,7 @@ class JoinChannelVideoMain: BaseViewController {
         }
     }
     func initSelectLayoutPicker() {
-        layoutVideos(2)
+        layoutVideos(1)
         selectLayoutPicker.label.stringValue = "Layout".localized
         selectLayoutPicker.picker.addItems(withTitles: layouts.map { $0.label })
         selectLayoutPicker.onSelectChanged {
@@ -285,19 +285,19 @@ class JoinChannelVideoMain: BaseViewController {
 
     func layoutVideos(_ count: Int) {
         videos = []
-        for i in 0...count - 1 {
+//        for i in 0...count - 1 {
             let view = VideoView.createFromNib()!
-            if(i == 0) {
-                view.placeholder.stringValue = "Local"
-                view.type = .local
-                view.statsInfo = StatisticsInfo(type: .local(StatisticsInfo.LocalInfo()))
-            } else {
-                view.placeholder.stringValue = "Remote \(i)"
+//            if(i == 0) {
+//                view.placeholder.stringValue = "Local"
+//                view.type = .local
+//                view.statsInfo = StatisticsInfo(type: .local(StatisticsInfo.LocalInfo()))
+//            } else {
+                view.placeholder.stringValue = "Remote \(0)"
                 view.type = .remote
                 view.statsInfo = StatisticsInfo(type: .remote(StatisticsInfo.RemoteInfo()))
-            }
+//            }
             videos.append(view)
-        }
+//        }
         // layout render view
         Container.layoutStream(views: videos)
     }
@@ -336,15 +336,15 @@ class JoinChannelVideoMain: BaseViewController {
             )
             
             // set up local video to render your local camera preview
-            let localVideo = videos[0]
-            let videoCanvas = AgoraRtcVideoCanvas()
-            videoCanvas.uid = 0
-            // the view to be binded
-            videoCanvas.view = localVideo.videocanvas
-            videoCanvas.renderMode = .hidden
-            agoraKit.setupLocalVideo(videoCanvas)
-            // you have to call startPreview to see local video
-            agoraKit.startPreview()
+//            let localVideo = videos[0]
+//            let videoCanvas = AgoraRtcVideoCanvas()
+//            videoCanvas.uid = 0
+//            // the view to be binded
+//            videoCanvas.view = localVideo.videocanvas
+//            videoCanvas.renderMode = .hidden
+//            agoraKit.setupLocalVideo(videoCanvas)
+//            // you have to call startPreview to see local video
+//            agoraKit.startPreview()
             
             // start joining channel
             // 1. Users can only see each other after they join the
@@ -392,6 +392,7 @@ class JoinChannelVideoMain: BaseViewController {
         let isEnable = sender.state == .on
         let pameters = """
          {
+           "rtc.video.sr_type": 7,
            "rtc.video.enable_sr": {
              "enabled": \(isEnable),
              "mode": 2
@@ -462,7 +463,7 @@ extension JoinChannelVideoMain: AgoraRtcEngineDelegate {
         LogUtils.log(message: "remote user join: \(uid) \(elapsed)ms", level: .info)
         
         // find a VideoView w/o uid assigned
-        if let remoteVideo = videos.first(where: { $0.uid == nil }) {
+        if let remoteVideo = videos.first {
             let videoCanvas = AgoraRtcVideoCanvas()
             videoCanvas.uid = uid
             // the view to be binded
