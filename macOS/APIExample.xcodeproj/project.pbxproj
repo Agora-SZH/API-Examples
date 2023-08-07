@@ -87,6 +87,9 @@
 		67B8C89C28058AB600195106 /* RawVideoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67B8C89B28058AB600195106 /* RawVideoData.swift */; };
 		67E23C7D2805995200FAB905 /* MediaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E23C7C2805995200FAB905 /* MediaUtils.m */; };
 		67E40B2527EC82F900C7A6E9 /* SpatialAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E40B2327EC82F900C7A6E9 /* SpatialAudio.swift */; };
+		8ADD9B3D2A80DF050057A2EC /* AdvancedSettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADD9B3B2A80DF050057A2EC /* AdvancedSettingController.swift */; };
+		8ADD9B3E2A80DF050057A2EC /* AdvancedSettingController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8ADD9B3C2A80DF050057A2EC /* AdvancedSettingController.xib */; };
+		8ADD9B422A80E1BD0057A2EC /* ShowSettingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADD9B412A80E1BD0057A2EC /* ShowSettingKey.swift */; };
 		8BCCA45B26271F7A001FD4CE /* AgoraYUVImageSourcePush.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BCCA45A26271F7A001FD4CE /* AgoraYUVImageSourcePush.m */; };
 		8BD4AE73272513FF00E95B87 /* SimpleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD4AE72272513FF00E95B87 /* SimpleFilter.swift */; };
 		8BE63B4227253CB000597DB1 /* SimpleFilter.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8BE63B4427253CB000597DB1 /* SimpleFilter.storyboard */; };
@@ -259,6 +262,9 @@
 		6F65EF2B97B89DE4581B426B /* Pods_APIExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_APIExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7330EE777B818DE1FD428DA3 /* Pods_SimpleFilter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SimpleFilter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C863718A380DFD36ABF19F /* Pods-APIExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIExample.debug.xcconfig"; path = "Target Support Files/Pods-APIExample/Pods-APIExample.debug.xcconfig"; sourceTree = "<group>"; };
+		8ADD9B3B2A80DF050057A2EC /* AdvancedSettingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingController.swift; sourceTree = "<group>"; };
+		8ADD9B3C2A80DF050057A2EC /* AdvancedSettingController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AdvancedSettingController.xib; sourceTree = "<group>"; };
+		8ADD9B412A80E1BD0057A2EC /* ShowSettingKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingKey.swift; sourceTree = "<group>"; };
 		8BCCA45926271F7A001FD4CE /* AgoraYUVImageSourcePush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgoraYUVImageSourcePush.h; sourceTree = "<group>"; };
 		8BCCA45A26271F7A001FD4CE /* AgoraYUVImageSourcePush.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AgoraYUVImageSourcePush.m; sourceTree = "<group>"; };
 		8BD4AE72272513FF00E95B87 /* SimpleFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleFilter.swift; sourceTree = "<group>"; };
@@ -645,6 +651,7 @@
 		5770E2C0258C580E00812A80 /* Component */ = {
 			isa = PBXGroup;
 			children = (
+				8ADD9B3A2A80D19A0057A2EC /* Setting */,
 				5770E2E2259040F900812A80 /* Base */,
 			);
 			path = Component;
@@ -754,6 +761,16 @@
 				1476E0A207E49E1B380D7B0F /* Pods-SimpleFilter.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		8ADD9B3A2A80D19A0057A2EC /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				8ADD9B412A80E1BD0057A2EC /* ShowSettingKey.swift */,
+				8ADD9B3B2A80DF050057A2EC /* AdvancedSettingController.swift */,
+				8ADD9B3C2A80DF050057A2EC /* AdvancedSettingController.xib */,
+			);
+			path = Setting;
 			sourceTree = "<group>";
 		};
 		8BD4AE6F272513D000E95B87 /* SimpleFilter */ = {
@@ -977,6 +994,7 @@
 				E7AD0DEA29CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.strings in Resources */,
 				033A9FFA252EB5FD00BC26E1 /* ScreenShare.storyboard in Resources */,
 				E77D54BE28F553DA00D51C1E /* JoinChannelVideoToken.strings in Resources */,
+				8ADD9B3E2A80DF050057A2EC /* AdvancedSettingController.xib in Resources */,
 				57645A03259B1C22007B1E30 /* CreateDataStream.strings in Resources */,
 				5770E2D5258C9E6F00812A80 /* Picker.xib in Resources */,
 				E75279B529F6651800358F18 /* Localizable.strings in Resources */,
@@ -1136,6 +1154,7 @@
 				E7AD0DEC29CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.swift in Sources */,
 				034C62932528474D00296ECF /* StatisticsInfo.swift in Sources */,
 				033A9FA4252EA86A00BC26E1 /* RTMPStreaming.swift in Sources */,
+				8ADD9B422A80E1BD0057A2EC /* ShowSettingKey.swift in Sources */,
 				67033723279E76560069F4B3 /* VideoProcess.swift in Sources */,
 				67E23C7D2805995200FAB905 /* MediaUtils.m in Sources */,
 				03B12DA4250E8F7F00E55818 /* AgoraExtension.swift in Sources */,
@@ -1148,6 +1167,7 @@
 				E77D54C028F553DA00D51C1E /* JoinChannelVideoToken.swift in Sources */,
 				0336A1CA25034F4700D61B7F /* ExternalAudio.mm in Sources */,
 				033A9FA1252EA86A00BC26E1 /* CustomAudioRender.swift in Sources */,
+				8ADD9B3D2A80DF050057A2EC /* AdvancedSettingController.swift in Sources */,
 				034C627C2526C43900296ECF /* ScreenShare.swift in Sources */,
 				034C62712525A35800296ECF /* StreamEncryption.swift in Sources */,
 				671BD67527E0717D0076D5E1 /* MediaPlayer.swift in Sources */,

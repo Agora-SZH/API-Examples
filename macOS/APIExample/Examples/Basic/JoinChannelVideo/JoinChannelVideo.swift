@@ -22,6 +22,19 @@ class JoinChannelVideoMain: BaseViewController {
     var videos: [VideoView] = []
     @IBOutlet weak var Container: AGEVideoContainer!
     
+
+    let setVc = AdvancedSettingController()
+    
+    let videoEncoderConfig = AgoraVideoEncoderConfiguration()
+
+    lazy var captureConfig: AgoraCameraCapturerConfiguration = {
+        let config = AgoraCameraCapturerConfiguration()
+        config.dimensions = CGSize(width: 1280, height: 720)
+        config.frameRate = 15
+        return config
+    }()
+    
+
     /**
      --- Cameras Picker ---
      */
@@ -87,15 +100,13 @@ class JoinChannelVideoMain: BaseViewController {
                   let fps = self.selectedFps else {
                 return
             }
-            self.agoraKit.setVideoEncoderConfiguration(
-                AgoraVideoEncoderConfiguration(
-                    size: resolution.size(),
-                    frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
-                    bitrate: AgoraVideoBitrateStandard,
-                    orientationMode: .adaptative,
-                    mirrorMode: AgoraVideoMirrorMode.auto
-                )
-            )
+            
+            self.videoEncoderConfig.dimensions = resolution.size()
+            self.videoEncoderConfig.frameRate =  AgoraVideoFrameRate(rawValue: fps) ?? .fps15
+            self.videoEncoderConfig.bitrate = AgoraVideoBitrateStandard
+            self.videoEncoderConfig.orientationMode = .adaptative
+            self.videoEncoderConfig.mirrorMode = AgoraVideoMirrorMode.auto
+            self.agoraKit.setVideoEncoderConfiguration(self.videoEncoderConfig)
         }
     }
     
@@ -406,7 +417,11 @@ class JoinChannelVideoMain: BaseViewController {
                 v.statsInfo?.updateSuperResolution("")
             }
         }
+
+        self.view.window?.addChildWindow(setVc.window!, ordered: .above)
+        
     }
+    
     override func viewWillBeRemovedFromSplitView() {
         if isJoined {
             agoraKit.disableVideo()
@@ -416,6 +431,87 @@ class JoinChannelVideoMain: BaseViewController {
         }
         AgoraRtcEngineKit.destroy()
     }
+    
+    
+    private let fpsItems: [AgoraVideoFrameRate] = [
+        .fps1,
+        .fps7,
+        .fps10,
+        .fps15,
+        .fps24,
+        .fps30,
+        .fps60
+    ]
+
+    
+    private var dimensionsItems: [CGSize] {
+        ShowAgoraVideoDimensions.allCases.map({$0.sizeValue})
+    }
+    
+    private var captureDimensionsItems: [CGSize] {
+        ShowAgoraCaptureVideoDimensions.allCases.map({$0.sizeValue})
+    }
+    
+    /// 更新设置
+    /// - Parameter key: 要更新的key
+    func updateSettingForkey(_ key: ShowSettingKey, currentChannelId:String? = nil) {
+        let isOn = key.boolValue
+        let indexValue = key.intValue
+        let sliderValue = key.floatValue
+        
+        switch key {
+        case .lowlightEnhance:
+            agoraKit.setLowlightEnhanceOptions(isOn, options: AgoraLowlightEnhanceOptions())
+        case .colorEnhance:
+            agoraKit.setColorEnhanceOptions(isOn, options: AgoraColorEnhanceOptions())
+        case .videoDenoiser:
+            agoraKit.setVideoDenoiserOptions(isOn, options: AgoraVideoDenoiserOptions())
+        case .beauty:
+            agoraKit.setBeautyEffectOptions(isOn, options: AgoraBeautyOptions())
+        case .PVC:
+            agoraKit.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
+        case .SR:
+            agoraKit.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(isOn), \"mode\": 2}}")
+//            setSuperResolutionOn(isOn)
+        case .BFrame:
+            
+           break
+        case .videoEncodeSize:
+            let index = indexValue % dimensionsItems.count
+            videoEncoderConfig.dimensions = dimensionsItems[index]
+            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
+        case .videoBitRate:
+            videoEncoderConfig.bitrate = Int(sliderValue)
+            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
+        case .FPS:
+            let index = indexValue % fpsItems.count
+            videoEncoderConfig.frameRate = fpsItems[index]
+            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
+            // 采集帧率
+            captureConfig.frameRate = Int32(fpsItems[index].rawValue)
+        case .H265:
+            setH265On(isOn)
+        case .earmonitoring:
+            agoraKit.enable(inEarMonitoring: isOn)
+        case .recordingSignalVolume:
+            agoraKit.adjustRecordingSignalVolume(Int(sliderValue))
+        case .musincVolume:
+            agoraKit.adjustAudioMixingVolume(Int(sliderValue))
+        case .audioBitRate:
+            break
+        case .captureVideoSize:
+            let index = indexValue % captureDimensionsItems.count
+            captureConfig.dimensions = captureDimensionsItems[index]
+        }
+    }
+    
+    /// 设置265
+    /// - Parameter isOn: 开关
+    func setH265On(_ isOn: Bool) {
+        agoraKit.setParameters("{\"engine.video.enable_hw_encoder\":\(isOn)}")
+        agoraKit.setParameters("{\"engine.video.codec_type\":\"\(isOn ? 3 : 2)\"}")
+    }
+    
 }
 
 /// agora rtc engine delegate events
