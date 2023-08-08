@@ -82,13 +82,14 @@ enum ShowAgoraCodeCType: String, CaseIterable {
 }
 
 enum ShowAgoraVideoDimensions: String, CaseIterable {
-    
-    case _240x360 = "240x360"
-    case _360x640 = "360x640"
-    case _480x856 = "480x856"
-    case _540x960 = "540x960"
-    case _720x1280 = "720x1280"
-//    case _1080x1920 = "1080x1920"
+    case _320x240 = "320x240"
+    case _480x360 = "480x360"
+    case _960x540 = "960x540"
+    case _960x720 = "960x720"
+    case _1280x720 = "1280x720"
+    case _1920x1080 = "1920x1080"
+    case _2560x1440 = "2560x1440"
+    case _3840x2160 = "3840x2160"
      
     var sizeValue: CGSize {
         let arr: [String] = rawValue.split(separator: "x").compactMap{"\($0)"}
@@ -142,6 +143,14 @@ extension AgoraVideoFrameRate {
         return "\(rawValue) fps"
     }
 }
+
+let fpsItems: [AgoraVideoFrameRate] = [
+    .fps10,
+    .fps15,
+    .fps24,
+    .fps30,
+    .fps60
+]
 
 enum ShowSettingKey: String, CaseIterable {
     
@@ -279,27 +288,6 @@ enum ShowSettingKey: String, CaseIterable {
             return (0, 100)
         default:
             return (0,0)
-        }
-    }
-    
-    // 选项
-    var items: [String] {
-        switch self {
-        case .videoEncodeSize:
-            return ShowAgoraVideoDimensions.allCases.map({ $0.rawValue })
-        case .FPS:
-            return [AgoraVideoFrameRate.fps1.stringValue(),
-                    AgoraVideoFrameRate.fps7.stringValue(),
-                    AgoraVideoFrameRate.fps10.stringValue(),
-                    AgoraVideoFrameRate.fps15.stringValue(),
-                    AgoraVideoFrameRate.fps24.stringValue(),
-            ]
-        case .audioBitRate:
-            return ["2","3","5"]
-        case .captureVideoSize:
-            return ShowAgoraCaptureVideoDimensions.allCases.map({ "\($0.rawValue)P" })
-        default:
-            return []
         }
     }
     

@@ -30,6 +30,9 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="sFq-oc-Ers"/>
                                 </constraints>
+                                <connections>
+                                    <action selector="openH265:" target="F0z-JX-Cv5" id="O3y-N1-noN"/>
+                                </connections>
                             </switch>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hIk-n9-PRL">
                                 <rect key="frame" x="2" y="5" width="38" height="16"/>
@@ -58,11 +61,14 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="OoM-NP-QUA"/>
                                 </constraints>
+                                <connections>
+                                    <action selector="colorinhance:" target="F0z-JX-Cv5" id="EYZ-CV-cdD"/>
+                                </connections>
                             </switch>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wVF-Kf-sKe">
                                 <rect key="frame" x="2" y="5" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="色彩增强" id="aSu-fT-iBX">
-                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -86,11 +92,14 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="fKd-Rk-CLR"/>
                                 </constraints>
+                                <connections>
+                                    <action selector="darklightinhance:" target="F0z-JX-Cv5" id="cqH-ay-0iq"/>
+                                </connections>
                             </switch>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7AQ-GD-uq1">
                                 <rect key="frame" x="2" y="5" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="暗光增强" id="0S1-80-QN8">
-                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -114,11 +123,14 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="9MP-JK-W2q"/>
                                 </constraints>
+                                <connections>
+                                    <action selector="videonoisereduction:" target="F0z-JX-Cv5" id="2vd-8c-OIp"/>
+                                </connections>
                             </switch>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ysu-kL-vw8">
                                 <rect key="frame" x="2" y="5" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="视频降噪" id="NFG-BT-20g">
-                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -142,11 +154,14 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="ypB-Z8-gAw"/>
                                 </constraints>
+                                <connections>
+                                    <action selector="ratesaving:" target="F0z-JX-Cv5" id="S2b-Yf-ihK"/>
+                                </connections>
                             </switch>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GGQ-F3-0Ip">
                                 <rect key="frame" x="2" y="5" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="码率节省" id="xTc-Sc-Ame">
-                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -168,7 +183,7 @@
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Zn5-BA-3lL">
                                 <rect key="frame" x="2" y="5" width="71" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="编码分辨率" id="oGU-Q6-HWR">
-                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -178,19 +193,25 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="95" id="soC-ON-N3n"/>
                                 </constraints>
-                                <popUpButtonCell key="cell" type="push" title="240x360" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="W0b-kG-yyj" id="h74-bF-S2m" userLabel="编码分辨率">
+                                <popUpButtonCell key="cell" type="push" title="960x540" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="erN-zC-Gvz" id="h74-bF-S2m" userLabel="编码分辨率">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="tIy-9e-6ln">
                                         <items>
-                                            <menuItem title="240x360" id="W0b-kG-yyj"/>
-                                            <menuItem title="360x640" id="erN-zC-Gvz"/>
-                                            <menuItem title="480x856" id="81l-sj-oG7"/>
-                                            <menuItem title="540x960" id="TbJ-q6-LgQ"/>
-                                            <menuItem title="720x1280" id="vtZ-FQ-wjU"/>
+                                            <menuItem title="320x240" id="W0b-kG-yyj" userLabel="320x240"/>
+                                            <menuItem title="480x360" id="lde-ZR-BOq" userLabel="480x360"/>
+                                            <menuItem title="960x540" state="on" id="erN-zC-Gvz" userLabel="960x540"/>
+                                            <menuItem title="960x720" id="81l-sj-oG7" userLabel="960x720"/>
+                                            <menuItem title="1280x720" id="TbJ-q6-LgQ" userLabel="1280x720"/>
+                                            <menuItem title="1920x1080" id="vtZ-FQ-wjU" userLabel="1920x1080"/>
+                                            <menuItem title="2560x1440" id="ZHD-dP-bem" userLabel="2560x1440"/>
+                                            <menuItem title="3840x2160" id="dAl-aU-yB0" userLabel="3840x2160"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
+                                <connections>
+                                    <action selector="dimensionsSet:" target="F0z-JX-Cv5" id="Sax-Se-PyK"/>
+                                </connections>
                             </popUpButton>
                         </subviews>
                         <constraints>
@@ -208,7 +229,7 @@
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JhJ-od-KZc">
                                 <rect key="frame" x="2" y="5" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="编码帧率" id="8cx-rn-eSX">
-                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -218,19 +239,22 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="95" id="aw6-o0-LUA"/>
                                 </constraints>
-                                <popUpButtonCell key="cell" type="push" title="1 fps" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="d6D-kZ-zcp" id="6dG-yC-fnp" userLabel="编码帧率">
+                                <popUpButtonCell key="cell" type="push" title="15 fps" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tBD-QG-z9G" id="6dG-yC-fnp" userLabel="编码帧率">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="7eC-BM-aWW">
                                         <items>
-                                            <menuItem title="1 fps" id="d6D-kZ-zcp"/>
-                                            <menuItem title="7 fps" id="eca-Cf-frC"/>
                                             <menuItem title="10 fps" id="FRT-On-FvQ"/>
-                                            <menuItem title="15 fps" id="tBD-QG-z9G"/>
+                                            <menuItem title="15 fps" state="on" id="tBD-QG-z9G"/>
                                             <menuItem title="24 fps" id="H5G-lp-sN9"/>
+                                            <menuItem title="30 fps" id="d6D-kZ-zcp" userLabel="30 fps"/>
+                                            <menuItem title="60 fps" state="on" id="eca-Cf-frC" userLabel="60 fps"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
+                                <connections>
+                                    <action selector="frameRate:" target="F0z-JX-Cv5" id="TVc-sg-Vw4"/>
+                                </connections>
                             </popUpButton>
                         </subviews>
                         <constraints>
@@ -242,33 +266,35 @@
                             <constraint firstItem="JhJ-od-KZc" firstAttribute="leading" secondItem="c1Q-D8-uOT" secondAttribute="leading" constant="4" id="yuD-Mo-IfK"/>
                         </constraints>
                     </customView>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="9Jl-CI-uEg">
-                        <rect key="frame" x="30" y="60" width="170" height="25"/>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="wMX-pf-AAv">
+                        <rect key="frame" x="30" y="60" width="100" height="25"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7kc-fI-NL2">
+                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="71G-Bu-acl">
+                                <rect key="frame" x="60" y="-2" width="42" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="38" id="q4d-bp-RrT"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="supperResolution:" target="F0z-JX-Cv5" id="ouI-og-zSq"/>
+                                </connections>
+                            </switch>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SKU-pI-dX9">
                                 <rect key="frame" x="2" y="5" width="31" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="码率" id="XCX-au-7DA">
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="超分" id="kRA-Mf-AjA">
                                     <font key="font" size="13" name=".PingFangSC-Regular"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gr0-Sl-a7w">
-                                <rect key="frame" x="73" y="-1" width="99" height="23"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="95" id="a5o-B0-5YQ"/>
-                                    <constraint firstAttribute="height" constant="15" id="lrO-fv-RnF"/>
-                                </constraints>
-                                <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="CfJ-JD-dks"/>
-                            </slider>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="width" constant="170" id="1vX-lB-lmD"/>
-                            <constraint firstAttribute="height" constant="25" id="7eM-qK-yrJ"/>
-                            <constraint firstItem="7kc-fI-NL2" firstAttribute="leading" secondItem="9Jl-CI-uEg" secondAttribute="leading" constant="4" id="Luz-5F-eQd"/>
-                            <constraint firstItem="gr0-Sl-a7w" firstAttribute="centerY" secondItem="9Jl-CI-uEg" secondAttribute="centerY" id="SDj-Sy-Zq3"/>
-                            <constraint firstItem="7kc-fI-NL2" firstAttribute="centerY" secondItem="9Jl-CI-uEg" secondAttribute="centerY" id="SKo-gT-QVe"/>
-                            <constraint firstAttribute="trailing" secondItem="gr0-Sl-a7w" secondAttribute="trailing" id="bdC-QF-vQZ"/>
+                            <constraint firstAttribute="bottom" secondItem="71G-Bu-acl" secondAttribute="bottom" id="3Lv-Yd-coP"/>
+                            <constraint firstAttribute="height" constant="25" id="6dl-NL-09N"/>
+                            <constraint firstItem="71G-Bu-acl" firstAttribute="top" secondItem="wMX-pf-AAv" secondAttribute="top" id="MPg-Pm-4zd"/>
+                            <constraint firstItem="SKU-pI-dX9" firstAttribute="leading" secondItem="wMX-pf-AAv" secondAttribute="leading" constant="4" id="fgO-v2-4la"/>
+                            <constraint firstItem="SKU-pI-dX9" firstAttribute="centerY" secondItem="wMX-pf-AAv" secondAttribute="centerY" id="g7B-3Z-kXy"/>
+                            <constraint firstAttribute="width" constant="100" id="mQY-7h-3U5"/>
+                            <constraint firstAttribute="trailing" secondItem="71G-Bu-acl" secondAttribute="trailing" id="yiW-kb-NAw"/>
                         </constraints>
                     </customView>
                 </subviews>
@@ -281,11 +307,11 @@
                     <constraint firstItem="cPH-Hk-otn" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="NFb-gQ-XFs"/>
                     <constraint firstItem="PNS-pN-Cds" firstAttribute="top" secondItem="dsw-PY-MU9" secondAttribute="bottom" constant="20" id="VtO-V9-cge"/>
                     <constraint firstItem="OHS-mZ-wbL" firstAttribute="top" secondItem="seQ-FZ-ZVB" secondAttribute="bottom" constant="20" id="aUQ-gV-Lha"/>
-                    <constraint firstItem="9Jl-CI-uEg" firstAttribute="top" secondItem="c1Q-D8-uOT" secondAttribute="bottom" constant="20" id="bF1-Vd-EC3"/>
+                    <constraint firstItem="wMX-pf-AAv" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="bbA-pc-M90"/>
                     <constraint firstItem="PNS-pN-Cds" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="gVM-vc-ggy"/>
                     <constraint firstItem="c1Q-D8-uOT" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="hBG-lx-L3l"/>
-                    <constraint firstItem="9Jl-CI-uEg" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="hSu-M2-NwB"/>
                     <constraint firstItem="c1Q-D8-uOT" firstAttribute="top" secondItem="cPH-Hk-otn" secondAttribute="bottom" constant="20" id="lqS-Rs-9Wb"/>
+                    <constraint firstItem="wMX-pf-AAv" firstAttribute="top" secondItem="c1Q-D8-uOT" secondAttribute="bottom" constant="20" id="qqy-vQ-4cg"/>
                     <constraint firstItem="lPI-W7-IGt" firstAttribute="top" secondItem="OHS-mZ-wbL" secondAttribute="bottom" constant="20" id="xEL-3I-ECZ"/>
                     <constraint firstItem="seQ-FZ-ZVB" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" id="z2l-Zx-GWD"/>
                     <constraint firstItem="dsw-PY-MU9" firstAttribute="top" secondItem="lPI-W7-IGt" secondAttribute="bottom" constant="20" id="zR0-4c-zcQ"/>

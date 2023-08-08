@@ -29,12 +29,66 @@ class AdvancedSettingController: NSWindowController {
         // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     }
     
+    func realWindow() -> SettingsWindow? {
+        return self.window as? SettingsWindow
+    }
+    
+}
+
+protocol SettingActionDelegate {
+    func updateSettingForkey(_ key: ShowSettingKey)
 }
 
 
 class SettingsWindow: NSWindow {
-
-    @IBAction func setting(_ sender: NSButton) {
-        
+    
+    var onSetDelegate: SettingActionDelegate?
+    
+    @IBAction func openH265(_ sender: NSSwitch) {
+        ShowSettingKey.H265.writeValue(sender.state == .on)
+        onSetDelegate?.updateSettingForkey(.H265)
     }
+    
+    @IBAction func colorinhance(_ sender: NSSwitch) {
+        ShowSettingKey.colorEnhance.writeValue(sender.state == .on)
+        onSetDelegate?.updateSettingForkey(.colorEnhance)
+    }
+    
+    
+    @IBAction func darklightinhance(_ sender: NSSwitch) {
+        ShowSettingKey.lowlightEnhance.writeValue(sender.state == .on)
+        onSetDelegate?.updateSettingForkey(.lowlightEnhance)
+    }
+    
+    @IBAction func videonoisereduction(_ sender: NSSwitch) {
+        ShowSettingKey.videoDenoiser.writeValue(sender.state == .on)
+        onSetDelegate?.updateSettingForkey(.videoDenoiser)
+    }
+    
+    
+    @IBAction func ratesaving(_ sender: NSSwitch) {
+        ShowSettingKey.PVC.writeValue(sender.state == .on)
+        onSetDelegate?.updateSettingForkey(.PVC)
+    }
+    
+    @IBAction func dimensionsSet(_ sender: NSPopUpButton) {
+        ShowSettingKey.videoEncodeSize.writeValue(sender.indexOfSelectedItem)
+        onSetDelegate?.updateSettingForkey(.videoEncodeSize)
+    }
+   
+    @IBAction func frameRate(_ sender: NSPopUpButton) {
+        ShowSettingKey.FPS.writeValue(sender.indexOfSelectedItem)
+        onSetDelegate?.updateSettingForkey(.FPS)
+    }
+    
+    @IBAction func supperResolution(_ sender: NSSwitch) {
+        ShowSettingKey.SR.writeValue(sender.state == .on)
+        onSetDelegate?.updateSettingForkey(.SR)
+    }
+    
+    @IBAction func bitrate(_ sender: NSSlider) {
+        ShowSettingKey.videoBitRate.writeValue(sender.floatValue)
+        onSetDelegate?.updateSettingForkey(.videoBitRate)
+    }
+    
 }

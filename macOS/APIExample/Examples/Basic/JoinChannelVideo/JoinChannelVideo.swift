@@ -14,7 +14,7 @@ struct SuperResolution: Codable {
     let type: Int
 }
 
-class JoinChannelVideoMain: BaseViewController {
+class JoinChannelVideoMain: BaseViewController, NSWindowDelegate {
     
     var agoraKit: AgoraRtcEngineKit!
     var remoteUid: UInt = 0
@@ -201,7 +201,7 @@ class JoinChannelVideoMain: BaseViewController {
         }
     }
     func initSelectLayoutPicker() {
-        layoutVideos(1)
+        layoutVideos(2)
         selectLayoutPicker.label.stringValue = "Layout".localized
         selectLayoutPicker.picker.addItems(withTitles: layouts.map { $0.label })
         selectLayoutPicker.onSelectChanged {
@@ -277,7 +277,7 @@ class JoinChannelVideoMain: BaseViewController {
         config.appId = KeyCenter.AppId
         config.areaCode = GlobalSettings.shared.area
         config.eventDelegate = self
-        
+                
         agoraKit = AgoraRtcEngineKit.sharedEngine(with: config, delegate: self)
         // Configuring Privatization Parameters
         Util.configPrivatization(agoraKit: agoraKit)
@@ -296,19 +296,19 @@ class JoinChannelVideoMain: BaseViewController {
 
     func layoutVideos(_ count: Int) {
         videos = []
-//        for i in 0...count - 1 {
+        for i in 0...count - 1 {
             let view = VideoView.createFromNib()!
-//            if(i == 0) {
-//                view.placeholder.stringValue = "Local"
-//                view.type = .local
-//                view.statsInfo = StatisticsInfo(type: .local(StatisticsInfo.LocalInfo()))
-//            } else {
-                view.placeholder.stringValue = "Remote \(0)"
+            if(i == 0) {
+                view.placeholder.stringValue = "Local"
+                view.type = .local
+                view.statsInfo = StatisticsInfo(type: .local(StatisticsInfo.LocalInfo()))
+            } else {
+                view.placeholder.stringValue = "Remote \(i)"
                 view.type = .remote
                 view.statsInfo = StatisticsInfo(type: .remote(StatisticsInfo.RemoteInfo()))
-//            }
+            }
             videos.append(view)
-//        }
+        }
         // layout render view
         Container.layoutStream(views: videos)
     }
@@ -347,15 +347,15 @@ class JoinChannelVideoMain: BaseViewController {
             )
             
             // set up local video to render your local camera preview
-//            let localVideo = videos[0]
-//            let videoCanvas = AgoraRtcVideoCanvas()
-//            videoCanvas.uid = 0
-//            // the view to be binded
-//            videoCanvas.view = localVideo.videocanvas
-//            videoCanvas.renderMode = .hidden
-//            agoraKit.setupLocalVideo(videoCanvas)
-//            // you have to call startPreview to see local video
-//            agoraKit.startPreview()
+            let localVideo = videos[0]
+            let videoCanvas = AgoraRtcVideoCanvas()
+            videoCanvas.uid = 0
+            // the view to be binded
+            videoCanvas.view = localVideo.videocanvas
+            videoCanvas.renderMode = .hidden
+            agoraKit.setupLocalVideo(videoCanvas)
+            // you have to call startPreview to see local video
+            agoraKit.startPreview()
             
             // start joining channel
             // 1. Users can only see each other after they join the
@@ -399,27 +399,14 @@ class JoinChannelVideoMain: BaseViewController {
         }
     }
     
-    @IBAction func superResolution(_ sender: NSSwitch) {
-        let isEnable = sender.state == .on
-        let pameters = """
-         {
-           "rtc.video.sr_type": 7,
-           "rtc.video.enable_sr": {
-             "enabled": \(isEnable),
-             "mode": 2
-           }
-         }
-       """
-        agoraKit.setParameters(pameters)
-        
-        if sender.state == .off {
-            videos.forEach { v in
-                v.statsInfo?.updateSuperResolution("")
-            }
+    
+    @IBAction func supperSets(_ sender: NSButton) {
+        if !isJoined {
+            return self.showAlert(title: "Error", message: "please set after join channal")
         }
-
+        let rewin = setVc.realWindow()
+        rewin?.onSetDelegate = self
         self.view.window?.addChildWindow(setVc.window!, ordered: .above)
-        
     }
     
     override func viewWillBeRemovedFromSplitView() {
@@ -432,16 +419,6 @@ class JoinChannelVideoMain: BaseViewController {
         AgoraRtcEngineKit.destroy()
     }
     
-    
-    private let fpsItems: [AgoraVideoFrameRate] = [
-        .fps1,
-        .fps7,
-        .fps10,
-        .fps15,
-        .fps24,
-        .fps30,
-        .fps60
-    ]
 
     
     private var dimensionsItems: [CGSize] {
@@ -450,59 +427,6 @@ class JoinChannelVideoMain: BaseViewController {
     
     private var captureDimensionsItems: [CGSize] {
         ShowAgoraCaptureVideoDimensions.allCases.map({$0.sizeValue})
-    }
-    
-    /// 更新设置
-    /// - Parameter key: 要更新的key
-    func updateSettingForkey(_ key: ShowSettingKey, currentChannelId:String? = nil) {
-        let isOn = key.boolValue
-        let indexValue = key.intValue
-        let sliderValue = key.floatValue
-        
-        switch key {
-        case .lowlightEnhance:
-            agoraKit.setLowlightEnhanceOptions(isOn, options: AgoraLowlightEnhanceOptions())
-        case .colorEnhance:
-            agoraKit.setColorEnhanceOptions(isOn, options: AgoraColorEnhanceOptions())
-        case .videoDenoiser:
-            agoraKit.setVideoDenoiserOptions(isOn, options: AgoraVideoDenoiserOptions())
-        case .beauty:
-            agoraKit.setBeautyEffectOptions(isOn, options: AgoraBeautyOptions())
-        case .PVC:
-            agoraKit.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
-        case .SR:
-            agoraKit.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(isOn), \"mode\": 2}}")
-//            setSuperResolutionOn(isOn)
-        case .BFrame:
-            
-           break
-        case .videoEncodeSize:
-            let index = indexValue % dimensionsItems.count
-            videoEncoderConfig.dimensions = dimensionsItems[index]
-            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
-        case .videoBitRate:
-            videoEncoderConfig.bitrate = Int(sliderValue)
-            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
-        case .FPS:
-            let index = indexValue % fpsItems.count
-            videoEncoderConfig.frameRate = fpsItems[index]
-            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
-            // 采集帧率
-            captureConfig.frameRate = Int32(fpsItems[index].rawValue)
-        case .H265:
-            setH265On(isOn)
-        case .earmonitoring:
-            agoraKit.enable(inEarMonitoring: isOn)
-        case .recordingSignalVolume:
-            agoraKit.adjustRecordingSignalVolume(Int(sliderValue))
-        case .musincVolume:
-            agoraKit.adjustAudioMixingVolume(Int(sliderValue))
-        case .audioBitRate:
-            break
-        case .captureVideoSize:
-            let index = indexValue % captureDimensionsItems.count
-            captureConfig.dimensions = captureDimensionsItems[index]
-        }
     }
     
     /// 设置265
@@ -559,7 +483,7 @@ extension JoinChannelVideoMain: AgoraRtcEngineDelegate {
         LogUtils.log(message: "remote user join: \(uid) \(elapsed)ms", level: .info)
         
         // find a VideoView w/o uid assigned
-        if let remoteVideo = videos.first {
+        if let remoteVideo = videos.first(where: { $0.uid == nil }) {
             let videoCanvas = AgoraRtcVideoCanvas()
             videoCanvas.uid = uid
             // the view to be binded
@@ -668,4 +592,75 @@ extension JoinChannelVideoMain: AgoraMediaFilterEventDelegate{
             }
         }
     }
+}
+
+
+extension JoinChannelVideoMain: SettingActionDelegate {
+    func updateSettingForkey(_ key: ShowSettingKey) {
+        let isOn = key.boolValue
+        let indexValue = key.intValue
+        let sliderValue = key.floatValue
+        
+        switch key {
+        case .lowlightEnhance:
+            agoraKit.setLowlightEnhanceOptions(isOn, options: AgoraLowlightEnhanceOptions())
+        case .colorEnhance:
+            agoraKit.setColorEnhanceOptions(isOn, options: AgoraColorEnhanceOptions())
+        case .videoDenoiser:
+            agoraKit.setVideoDenoiserOptions(isOn, options: AgoraVideoDenoiserOptions())
+        case .beauty:
+            agoraKit.setBeautyEffectOptions(isOn, options: AgoraBeautyOptions())
+        case .PVC:
+            agoraKit.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
+        case .SR:
+            setSuperResolutionOn(isOn, srType: .x2)
+        case .BFrame:
+           break
+        case .videoEncodeSize:
+            let index = indexValue % dimensionsItems.count
+            let dimensions = dimensionsItems[index]
+            videoEncoderConfig.dimensions = dimensions
+            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
+        case .videoBitRate:
+            videoEncoderConfig.bitrate = Int(sliderValue)
+            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
+        case .FPS:
+            let index = indexValue % fpsItems.count
+            videoEncoderConfig.frameRate = fpsItems[index]
+            agoraKit.setVideoEncoderConfiguration(videoEncoderConfig)
+            // 采集帧率
+            captureConfig.frameRate = Int32(fpsItems[index].rawValue)
+        case .H265:
+            setH265On(isOn)
+        case .earmonitoring:
+            agoraKit.enable(inEarMonitoring: isOn)
+        case .recordingSignalVolume:
+            agoraKit.adjustRecordingSignalVolume(Int(sliderValue))
+        case .musincVolume:
+            agoraKit.adjustAudioMixingVolume(Int(sliderValue))
+        case .audioBitRate:
+            break
+        case .captureVideoSize:
+            let index = indexValue % captureDimensionsItems.count
+            captureConfig.dimensions = captureDimensionsItems[index]
+        }
+    }
+
+    func setSuperResolutionOn(_ isOn: Bool, srType:SRType = .none) {
+        if !isOn {
+            videos.forEach { v in
+                v.statsInfo?.updateSuperResolution("")
+            }
+        }
+        if srType == .none {
+            agoraKit.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(false), \"mode\": 2}}")
+        } else {
+            agoraKit.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(false), \"mode\": 2}}")
+            agoraKit.setParameters("{\"rtc.video.sr_type\":\(srType.rawValue)}")
+            agoraKit.setParameters("{\"rtc.video.sr_max_wh\":\(921600)}")
+            // enabled要放在srType之后 否则修改超分倍数可能不会立即生效
+            agoraKit.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(isOn), \"mode\": 2}}")
+        }
+    }
+    
 }
