@@ -37,6 +37,7 @@ class AdvancedSettingController: NSWindowController {
 
 protocol SettingActionDelegate {
     func updateSettingForkey(_ key: ShowSettingKey)
+    func updateAudioSettingForkey(_ key: ShowAudioSettingKey)
 }
 
 
@@ -54,7 +55,6 @@ class SettingsWindow: NSWindow {
         onSetDelegate?.updateSettingForkey(.colorEnhance)
     }
     
-    
     @IBAction func darklightinhance(_ sender: NSSwitch) {
         ShowSettingKey.lowlightEnhance.writeValue(sender.state == .on)
         onSetDelegate?.updateSettingForkey(.lowlightEnhance)
@@ -64,7 +64,6 @@ class SettingsWindow: NSWindow {
         ShowSettingKey.videoDenoiser.writeValue(sender.state == .on)
         onSetDelegate?.updateSettingForkey(.videoDenoiser)
     }
-    
     
     @IBAction func ratesaving(_ sender: NSSwitch) {
         ShowSettingKey.PVC.writeValue(sender.state == .on)
@@ -91,4 +90,27 @@ class SettingsWindow: NSWindow {
         onSetDelegate?.updateSettingForkey(.videoBitRate)
     }
     
+    @IBAction func ains_selected(_ sender: NSSegmentedControl) {
+        let state = ShowAudioSettingKey.AINS_STATE(rawValue: sender.indexOfSelectedItem)!
+        ShowAudioSettingKey.AINS(state: state).writeValue()
+        onSetDelegate?.updateAudioSettingForkey(.AINS(state: state))
+    }
+    
+    @IBAction func aec_selected(_ sender: NSSegmentedControl) {
+        let aecIsOn = sender.indexOfSelectedItem == 1
+        ShowAudioSettingKey.AEC(isOn: aecIsOn).writeValue()
+        onSetDelegate?.updateAudioSettingForkey(.AEC(isOn: aecIsOn))
+    }
+    
+    @IBAction func aec_level_selected(_ sender: NSSegmentedControl) {
+        let filter_length = ShowAudioSettingKey.AEC_FILTER_LENGTH(rawValue: sender.indexOfSelectedItem)!
+        ShowAudioSettingKey.AEC_LENGTH(length: filter_length).writeValue()
+        onSetDelegate?.updateAudioSettingForkey(.AEC_LENGTH(length: filter_length))
+    }
+    
+    @IBAction func aec_filter_selected(_ sender: NSSegmentedControl) {
+        let filter_type = sender.indexOfSelectedItem
+        ShowAudioSettingKey.AEC_FILTER_TYPE(type: filter_type).writeValue()
+        onSetDelegate?.updateAudioSettingForkey(.AEC_FILTER_TYPE(type: filter_type))
+    }
 }

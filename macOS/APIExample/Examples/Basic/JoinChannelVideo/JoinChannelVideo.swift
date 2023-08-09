@@ -401,9 +401,9 @@ class JoinChannelVideoMain: BaseViewController, NSWindowDelegate {
     
     
     @IBAction func supperSets(_ sender: NSButton) {
-        if !isJoined {
-            return self.showAlert(title: "Error", message: "please set after join channal")
-        }
+//        if !isJoined {
+//            return self.showAlert(title: "Error", message: "please set after join channal")
+//        }
         let rewin = setVc.realWindow()
         rewin?.onSetDelegate = self
         self.view.window?.addChildWindow(setVc.window!, ordered: .above)
@@ -596,6 +596,27 @@ extension JoinChannelVideoMain: AgoraMediaFilterEventDelegate{
 
 
 extension JoinChannelVideoMain: SettingActionDelegate {
+    func updateAudioSettingForkey(_ key: ShowAudioSettingKey) {
+        switch key {
+        case .AINS(let state):
+            self.setAINS(with: state)
+        case .AEC(let isOn):
+            self.setAIAECOn(isOn: isOn!)
+        case .AEC_LENGTH(let length):
+            if ShowAudioSettingKey.AEC(isOn: nil).boolValue == false {
+                self.showAlert(title: "Error", message: "please open AEC first")
+                return
+            }
+            self.setAIAEC(with: length)
+        case .AEC_FILTER_TYPE(let type):
+            if ShowAudioSettingKey.AEC(isOn: nil).boolValue == false {
+                self.showAlert(title: "Error", message: "please open AEC first")
+                return
+            }
+            self.setAIAEC(type: type)
+        }
+    }
+    
     func updateSettingForkey(_ key: ShowSettingKey) {
         let isOn = key.boolValue
         let indexValue = key.intValue
@@ -663,4 +684,61 @@ extension JoinChannelVideoMain: SettingActionDelegate {
         }
     }
     
+    /**
+     * 开启/关闭 AI降噪
+     * @param
+     * @return 开启/关闭回声消除的结果
+     */
+    public func setAINS(with level: ShowAudioSettingKey.AINS_STATE) {
+        switch level {
+        case .high:
+            agoraKit.setParameters("{\"che.audio.ains_mode\":2}")
+            agoraKit.setParameters("{\"che.audio.nsng.lowerBound\":10}")
+            agoraKit.setParameters("{\"che.audio.nsng.lowerMask\":10}")
+            agoraKit.setParameters("{\"che.audio.nsng.statisticalbound\":0}")
+            agoraKit.setParameters("{\"che.audio.nsng.finallowermask\":8}")
+            agoraKit.setParameters("{\"che.audio.nsng.enhfactorstastical\":200}")
+        case .mid:
+            agoraKit.setParameters("{\"che.audio.ains_mode\":2}")
+            agoraKit.setParameters("{\"che.audio.nsng.lowerBound\":80}")
+            agoraKit.setParameters("{\"che.audio.nsng.lowerMask\":50}")
+            agoraKit.setParameters("{\"che.audio.nsng.statisticalbound\":5}")
+            agoraKit.setParameters("{\"che.audio.nsng.finallowermask\":30}")
+            agoraKit.setParameters("{\"che.audio.nsng.enhfactorstastical\":200}")
+        case .off:
+            agoraKit.setParameters("{\"che.audio.ains_mode\":-1}")
+            agoraKit.setParameters("{\"che.audio.nsng.lowerBound\":80}")
+            agoraKit.setParameters("{\"che.audio.nsng.lowerMask\":50}")
+            agoraKit.setParameters("{\"che.audio.nsng.statisticalbound\":5}")
+            agoraKit.setParameters("{\"che.audio.nsng.finallowermask\":30}")
+            agoraKit.setParameters("{\"che.audio.nsng.enhfactorstastical\":200}")
+        }
+    }
+    
+    //AIAEC-AI回声消除
+    public func setAIAECOn(isOn: Bool){
+        //agora_ai_echo_cancellation
+//        rtcKit.enableExtension(withVendor: "agora_ai_echo_cancellation", extension: "", enabled: true)
+        if (isOn){
+            agoraKit.setParameters("{\"che.audio.aiaec.working_mode\":1}");
+        } else {
+            agoraKit.setParameters("{\"che.audio.aiaec.working_mode\":0}");
+        }
+    }
+    
+    public func setAIAEC(with length: ShowAudioSettingKey.AEC_FILTER_LENGTH) {
+        switch length {
+        case .small:
+            agoraKit.setParameters("{\"che.audio.aec.filter.length.ms\":48}")
+        case .middle:
+            agoraKit.setParameters("{\"che.audio.aec.filter.length.ms\":200}")
+        case .long:
+            agoraKit.setParameters("{\"che.audio.aec.filter.length.ms\":460}")
+        }
+    }
+    
+    public func setAIAEC(type: Int) {
+        agoraKit.setParameters("{\"che.audio.aec.linear_filter_type\":\(type)}");
+    }
+
 }

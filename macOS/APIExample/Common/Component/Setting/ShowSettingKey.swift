@@ -8,6 +8,73 @@
 import Foundation
 import AgoraRtcKit
 
+enum ShowAudioSettingKey {
+    /**
+     * AI降噪等级
+     *
+     */
+    @objc public enum AINS_STATE: Int {
+        case off
+        case mid
+        case high
+    }
+    
+    /**
+     * 回声消除等级
+     * small 对应UI上的零回声
+     * middle 对应UI上的标准
+     * long 对应UI上的流畅
+     */
+    @objc public enum AEC_FILTER_LENGTH: Int {
+        case small
+        case middle
+        case long
+    }
+
+    case AINS(state: AINS_STATE)   // AI降噪
+    case AEC(isOn: Bool?)  // 回声消除
+    case AEC_LENGTH(length: AEC_FILTER_LENGTH)
+    case AEC_FILTER_TYPE(type: Int)
+
+    var boolValue: Bool {
+        return UserDefaults.standard.bool(forKey: self.caseKey())
+    }
+
+    var intValue: Int {
+        return UserDefaults.standard.integer(forKey: self.caseKey())
+    }
+    
+    func caseKey() -> String {
+        switch self {
+        case .AINS(_):
+            return "AINS"
+        case .AEC(_):
+            return "AEC"
+        case .AEC_LENGTH(_):
+            return "AEC_LENGTH"
+        case .AEC_FILTER_TYPE(_):
+            return "AEC_FILTER_TYPE"
+        }
+    }
+
+    func writeValue() {
+        var value : Any
+        switch self {
+        case .AINS(let state):
+            value = state.rawValue
+        case .AEC(let isOn):
+            value = isOn
+        case .AEC_LENGTH(let length):
+            value = length.rawValue
+        case .AEC_FILTER_TYPE(let type):
+            value = type
+        }
+        UserDefaults.standard.set(value, forKey: self.caseKey())
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
 // 超分倍数
 enum SRType: Int {
     case none = -1

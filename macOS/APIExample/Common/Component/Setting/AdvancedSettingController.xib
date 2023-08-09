@@ -16,10 +16,10 @@
         <window title="高级视频设置" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="SettingsWindow" customModule="APIExample" customModuleProvider="target">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="400" height="420"/>
+            <rect key="contentRect" x="196" y="240" width="430" height="420"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="875"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="400" height="420"/>
+                <rect key="frame" x="0.0" y="0.0" width="430" height="420"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="seQ-FZ-ZVB">
@@ -248,7 +248,7 @@
                                             <menuItem title="15 fps" state="on" id="tBD-QG-z9G"/>
                                             <menuItem title="24 fps" id="H5G-lp-sN9"/>
                                             <menuItem title="30 fps" id="d6D-kZ-zcp" userLabel="30 fps"/>
-                                            <menuItem title="60 fps" state="on" id="eca-Cf-frC" userLabel="60 fps"/>
+                                            <menuItem title="60 fps" id="eca-Cf-frC" userLabel="60 fps"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -297,8 +297,164 @@
                             <constraint firstAttribute="trailing" secondItem="71G-Bu-acl" secondAttribute="trailing" id="yiW-kb-NAw"/>
                         </constraints>
                     </customView>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fbv-w0-vE9">
+                        <rect key="frame" x="190" y="375" width="170" height="25"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iK4-K8-gBM">
+                                <rect key="frame" x="2" y="5" width="47" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="AI 降噪" id="aIL-qC-4EX">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IIa-xQ-chl">
+                                <rect key="frame" x="64" y="1" width="108" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="104" id="Cgn-cd-wxh"/>
+                                </constraints>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="bO7-fc-Ckd">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="关闭" width="32" selected="YES"/>
+                                        <segment label="中" width="32" tag="1"/>
+                                        <segment label="高" width="32"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="ains_selected:" target="F0z-JX-Cv5" id="Jgx-xH-cV3"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="iK4-K8-gBM" firstAttribute="centerY" secondItem="Fbv-w0-vE9" secondAttribute="centerY" id="Bb2-s0-ytm"/>
+                            <constraint firstAttribute="trailing" secondItem="IIa-xQ-chl" secondAttribute="trailing" id="DZz-6g-mL4"/>
+                            <constraint firstAttribute="width" constant="170" id="Fro-eE-oWk"/>
+                            <constraint firstItem="IIa-xQ-chl" firstAttribute="top" secondItem="Fbv-w0-vE9" secondAttribute="top" id="Hf6-j0-o2R"/>
+                            <constraint firstItem="iK4-K8-gBM" firstAttribute="leading" secondItem="Fbv-w0-vE9" secondAttribute="leading" constant="4" id="Khc-Vd-5Ym"/>
+                            <constraint firstAttribute="bottom" secondItem="IIa-xQ-chl" secondAttribute="bottom" constant="2" id="zZN-gG-9yc"/>
+                            <constraint firstAttribute="height" constant="25" id="zuS-hm-HAh"/>
+                        </constraints>
+                    </customView>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="h1q-qi-Se1">
+                        <rect key="frame" x="190" y="330" width="170" height="25"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vMl-Fv-lfh">
+                                <rect key="frame" x="2" y="5" width="73" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="AI 回声消除" id="13j-h6-lLa">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ukp-ot-fhq">
+                                <rect key="frame" x="98" y="-1" width="74" height="27"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="70" id="Az8-n7-SId"/>
+                                </constraints>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="hla-y0-3VA">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="关闭" width="32" selected="YES"/>
+                                        <segment label="开启" width="32" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="aec_selected:" target="F0z-JX-Cv5" id="zgR-aG-qX0"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="ukp-ot-fhq" secondAttribute="bottom" id="0Kd-Tf-4YB"/>
+                            <constraint firstAttribute="width" constant="170" id="BCF-Jf-rrW"/>
+                            <constraint firstAttribute="trailing" secondItem="ukp-ot-fhq" secondAttribute="trailing" id="QoM-Oy-C1l"/>
+                            <constraint firstItem="vMl-Fv-lfh" firstAttribute="centerY" secondItem="h1q-qi-Se1" secondAttribute="centerY" id="fba-Al-qso"/>
+                            <constraint firstItem="vMl-Fv-lfh" firstAttribute="leading" secondItem="h1q-qi-Se1" secondAttribute="leading" constant="4" id="ghX-EC-onl"/>
+                            <constraint firstAttribute="height" constant="25" id="rcY-jg-5tx"/>
+                            <constraint firstItem="ukp-ot-fhq" firstAttribute="top" secondItem="h1q-qi-Se1" secondAttribute="top" id="ziY-jN-R5B"/>
+                        </constraints>
+                    </customView>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="INf-uf-yyD">
+                        <rect key="frame" x="190" y="285" width="215" height="25"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OVv-JF-8np">
+                                <rect key="frame" x="2" y="5" width="111" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="回声消除尾音长度" id="QzR-Hr-fqo">
+                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hyG-iD-Xbx">
+                                <rect key="frame" x="118" y="-1" width="99" height="27"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="95" id="6oi-xk-vCK"/>
+                                </constraints>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectOne" id="3te-Dy-fNq">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="小" width="32"/>
+                                        <segment label="中" width="32" tag="1"/>
+                                        <segment label="大"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="aec_level_selected:" target="F0z-JX-Cv5" id="xkv-1j-eA9"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="OVv-JF-8np" firstAttribute="centerY" secondItem="INf-uf-yyD" secondAttribute="centerY" id="Q01-zD-7KO"/>
+                            <constraint firstAttribute="width" constant="215" id="U0M-xn-A5y"/>
+                            <constraint firstAttribute="bottom" secondItem="hyG-iD-Xbx" secondAttribute="bottom" id="a9O-bZ-I6B"/>
+                            <constraint firstAttribute="trailing" secondItem="hyG-iD-Xbx" secondAttribute="trailing" id="f8r-5c-tNF"/>
+                            <constraint firstItem="hyG-iD-Xbx" firstAttribute="top" secondItem="INf-uf-yyD" secondAttribute="top" id="o98-Zp-PNc"/>
+                            <constraint firstAttribute="height" constant="25" id="ooi-Sc-v4S"/>
+                            <constraint firstItem="OVv-JF-8np" firstAttribute="leading" secondItem="INf-uf-yyD" secondAttribute="leading" constant="4" id="unf-zw-eUg"/>
+                        </constraints>
+                    </customView>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="CrG-NW-rHQ">
+                        <rect key="frame" x="190" y="240" width="215" height="25"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xdE-a9-U97">
+                                <rect key="frame" x="2" y="5" width="97" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="回声消除滤波器" id="4Gc-e5-oxU">
+                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="A0x-og-huc">
+                                <rect key="frame" x="133" y="-1" width="84" height="27"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="toe-Ej-brE"/>
+                                </constraints>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fill" style="rounded" trackingMode="selectOne" id="7jW-XA-SeL">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="MMM" width="36"/>
+                                        <segment label="SSS" width="30" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="aec_filter_selected:" target="F0z-JX-Cv5" id="kS6-Fd-ehc"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="215" id="3KQ-jB-RFT"/>
+                            <constraint firstItem="xdE-a9-U97" firstAttribute="centerY" secondItem="CrG-NW-rHQ" secondAttribute="centerY" id="JSO-wH-W06"/>
+                            <constraint firstAttribute="height" constant="25" id="Vvg-Um-hdD"/>
+                            <constraint firstItem="xdE-a9-U97" firstAttribute="leading" secondItem="CrG-NW-rHQ" secondAttribute="leading" constant="4" id="ag5-Qw-qTL"/>
+                            <constraint firstItem="A0x-og-huc" firstAttribute="top" secondItem="CrG-NW-rHQ" secondAttribute="top" id="cgY-eR-gWN"/>
+                            <constraint firstAttribute="trailing" secondItem="A0x-og-huc" secondAttribute="trailing" id="nNc-VU-4n3"/>
+                            <constraint firstAttribute="bottom" secondItem="A0x-og-huc" secondAttribute="bottom" id="qnb-Ce-31C"/>
+                        </constraints>
+                    </customView>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="h1q-qi-Se1" firstAttribute="top" secondItem="Fbv-w0-vE9" secondAttribute="bottom" constant="20" id="1FD-Lt-xaS"/>
+                    <constraint firstItem="Fbv-w0-vE9" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="2B1-5w-cNz"/>
                     <constraint firstItem="lPI-W7-IGt" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="69H-HM-9c4"/>
                     <constraint firstItem="seQ-FZ-ZVB" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="7Ge-0t-4ef"/>
                     <constraint firstItem="dsw-PY-MU9" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="7h6-C4-hdA"/>
@@ -306,12 +462,18 @@
                     <constraint firstItem="OHS-mZ-wbL" firstAttribute="leading" secondItem="seQ-FZ-ZVB" secondAttribute="leading" id="K9p-C9-wgA"/>
                     <constraint firstItem="cPH-Hk-otn" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="NFb-gQ-XFs"/>
                     <constraint firstItem="PNS-pN-Cds" firstAttribute="top" secondItem="dsw-PY-MU9" secondAttribute="bottom" constant="20" id="VtO-V9-cge"/>
+                    <constraint firstItem="INf-uf-yyD" firstAttribute="leading" secondItem="h1q-qi-Se1" secondAttribute="leading" id="YSP-g3-Pii"/>
                     <constraint firstItem="OHS-mZ-wbL" firstAttribute="top" secondItem="seQ-FZ-ZVB" secondAttribute="bottom" constant="20" id="aUQ-gV-Lha"/>
+                    <constraint firstItem="CrG-NW-rHQ" firstAttribute="top" secondItem="INf-uf-yyD" secondAttribute="bottom" constant="20" id="at4-hQ-x9G"/>
                     <constraint firstItem="wMX-pf-AAv" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="bbA-pc-M90"/>
+                    <constraint firstItem="INf-uf-yyD" firstAttribute="top" secondItem="h1q-qi-Se1" secondAttribute="bottom" constant="20" id="eTx-OV-5df"/>
                     <constraint firstItem="PNS-pN-Cds" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="gVM-vc-ggy"/>
                     <constraint firstItem="c1Q-D8-uOT" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="30" id="hBG-lx-L3l"/>
                     <constraint firstItem="c1Q-D8-uOT" firstAttribute="top" secondItem="cPH-Hk-otn" secondAttribute="bottom" constant="20" id="lqS-Rs-9Wb"/>
+                    <constraint firstItem="h1q-qi-Se1" firstAttribute="leading" secondItem="OHS-mZ-wbL" secondAttribute="trailing" constant="60" id="ok7-Bb-0Yd"/>
                     <constraint firstItem="wMX-pf-AAv" firstAttribute="top" secondItem="c1Q-D8-uOT" secondAttribute="bottom" constant="20" id="qqy-vQ-4cg"/>
+                    <constraint firstItem="CrG-NW-rHQ" firstAttribute="leading" secondItem="dsw-PY-MU9" secondAttribute="trailing" constant="60" id="t8u-Kb-FjX"/>
+                    <constraint firstItem="Fbv-w0-vE9" firstAttribute="leading" secondItem="seQ-FZ-ZVB" secondAttribute="trailing" constant="60" id="u7K-JD-8ZI"/>
                     <constraint firstItem="lPI-W7-IGt" firstAttribute="top" secondItem="OHS-mZ-wbL" secondAttribute="bottom" constant="20" id="xEL-3I-ECZ"/>
                     <constraint firstItem="seQ-FZ-ZVB" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" id="z2l-Zx-GWD"/>
                     <constraint firstItem="dsw-PY-MU9" firstAttribute="top" secondItem="lPI-W7-IGt" secondAttribute="bottom" constant="20" id="zR0-4c-zcQ"/>
