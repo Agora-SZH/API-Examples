@@ -401,9 +401,9 @@ class JoinChannelVideoMain: BaseViewController, NSWindowDelegate {
     
     
     @IBAction func supperSets(_ sender: NSButton) {
-//        if !isJoined {
-//            return self.showAlert(title: "Error", message: "please set after join channal")
-//        }
+        if !isJoined {
+            return self.showAlert(title: "Error", message: "please set after join channal")
+        }
         let rewin = setVc.realWindow()
         rewin?.onSetDelegate = self
         self.view.window?.addChildWindow(setVc.window!, ordered: .above)
@@ -604,14 +604,12 @@ extension JoinChannelVideoMain: SettingActionDelegate {
             self.setAIAECOn(isOn: isOn!)
         case .AEC_LENGTH(let length):
             if ShowAudioSettingKey.AEC(isOn: nil).boolValue == false {
-                self.showAlert(title: "Error", message: "please open AEC first")
-                return
+                return self.showAlert(title: "Error", message: "please open AEC first")
             }
             self.setAIAEC(with: length)
         case .AEC_FILTER_TYPE(let type):
             if ShowAudioSettingKey.AEC(isOn: nil).boolValue == false {
-                self.showAlert(title: "Error", message: "please open AEC first")
-                return
+                return self.showAlert(title: "Error", message: "please open AEC first")
             }
             self.setAIAEC(type: type)
         }
@@ -634,7 +632,8 @@ extension JoinChannelVideoMain: SettingActionDelegate {
         case .PVC:
             agoraKit.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
         case .SR:
-            setSuperResolutionOn(isOn, srType: .x2)
+            let srType: SRType = indexValue == 0 ? .x1_33 : .x2
+            setSuperResolutionOn(isOn, srType: srType)
         case .BFrame:
            break
         case .videoEncodeSize:

@@ -80,11 +80,12 @@ class SettingsWindow: NSWindow {
         onSetDelegate?.updateSettingForkey(.FPS)
     }
     
-    @IBAction func supperResolution(_ sender: NSSwitch) {
-        ShowSettingKey.SR.writeValue(sender.state == .on)
+    @IBAction func supperResolution(_ sender: NSSegmentedControl) {
+        ShowSettingKey.SR.writeValue(sender.indexOfSelectedItem)
         onSetDelegate?.updateSettingForkey(.SR)
     }
     
+
     @IBAction func bitrate(_ sender: NSSlider) {
         ShowSettingKey.videoBitRate.writeValue(sender.floatValue)
         onSetDelegate?.updateSettingForkey(.videoBitRate)

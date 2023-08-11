@@ -63,7 +63,7 @@ enum ShowAudioSettingKey {
         case .AINS(let state):
             value = state.rawValue
         case .AEC(let isOn):
-            value = isOn
+            value = isOn ?? true
         case .AEC_LENGTH(let length):
             value = length.rawValue
         case .AEC_FILTER_TYPE(let type):
