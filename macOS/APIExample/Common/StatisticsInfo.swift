@@ -37,6 +37,9 @@ struct StatisticsInfo {
     
     var type: StatisticsType
     var firstFrameElapsedTime: Double = 0
+    var preloadElapsedTime: Double = 0
+    var localUid: UInt = 0
+    var remoteUid: UInt = 0
     
     init(type: StatisticsType) {
         self.type = type
@@ -134,6 +137,15 @@ struct StatisticsInfo {
     
     mutating func updateFirstFrameInfo(_ info: AgoraVideoRenderingTracingInfo) {
         firstFrameElapsedTime = Double(info.elapsedTime)
+        preloadElapsedTime = Double(info.join2JoinSuccess)
+    }
+    
+    mutating func updateRemoteUid(_ uid: UInt) {
+        remoteUid = uid
+    }
+    
+    mutating func updateLocalUid(_ uid: UInt) {
+        localUid = uid
     }
     
     func description(audioOnly:Bool) -> String {
@@ -154,6 +166,7 @@ struct StatisticsInfo {
             results.append("Volume: \(volume)")
         }
         
+        let uid = "uid: \(localUid)"
         if(!audioOnly) {
             if let videoStats = info.videoStats, let channelStats = info.channelStats, let audioStats = info.audioStats {
                 results.append("\(Int(videoStats.encodedFrameWidth))×\(Int(videoStats.encodedFrameHeight)),\(videoStats.sentFrameRate)fps")
@@ -176,6 +189,9 @@ struct StatisticsInfo {
             results.append(firstFrame)
         }
         
+        if localUid > 0 {
+            results.insert(uid, at: 0)
+        }
         return results.joined(separator: "\n")
     }
     
@@ -188,6 +204,8 @@ struct StatisticsInfo {
             results.append("Volume: \(volume)")
         }
         
+        let preloadTime = "join2Success: \(preloadElapsedTime)"
+        let uid = "uid: \(remoteUid)"
         if(!audioOnly) {
             if let videoStats = info.videoStats, let audioStats = info.audioStats {
                 let audioQuality:AgoraNetworkQuality = AgoraNetworkQuality(rawValue: audioStats.quality) ?? .unknown
@@ -197,6 +215,7 @@ struct StatisticsInfo {
                 results.append("VLoss: \(videoStats.packetLossRate)%")
                 results.append("ALoss: \(audioStats.audioLossRate)%")
                 results.append("AQuality: \(audioQuality.description())")
+                
             }
         } else {
             if let audioStats = info.audioStats {
@@ -213,6 +232,13 @@ struct StatisticsInfo {
         
         if let superResolution = info.superResolution {
             results.append("superResolution: \(superResolution)")
+        }
+        
+        if remoteUid > 0 {
+            results.insert(uid, at: 0)
+        }
+        if preloadElapsedTime > 0 {
+            results.append(preloadTime)
         }
         return results.joined(separator: "\n")
     }
